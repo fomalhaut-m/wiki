@@ -19,10 +19,11 @@ jobs:
         with:
           node-version: '12'
 
+      - name: Install npm@6
+        run: npm install -g npm@6
+
       - name: Configure npm
-        run: |
-          npm config set legacy-peer-deps true
-          npm config set registry https://registry.npmjs.org/
+        run: npm config set legacy-peer-deps true
 
       - name: Install GitBook
         run: npm install -g gitbook-cli
