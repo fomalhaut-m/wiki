@@ -1,0 +1,50 @@
+name: Build and Deploy GitBook to OSS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install GitBook
+        run: npm install -g gitbook-cli
+
+      - name: Install GitBook plugins
+        run: gitbook install
+
+      - name: Build GitBook
+        run: gitbook build
+        working-directory: .
+
+      - name: Download ossutil
+        run: |
+          wget https://github.com/aliyun/ossutil/releases/download/v1.7.16/ossutil-v1.7.16-linux-amd64.zip -O ossutil.zip
+          unzip ossutil.zip
+          chmod +x ossutil-v1.7.16-linux-amd64/ossutil
+          mv ossutil-v1.7.16-linux-amd64/ossutil /usr/local/bin/ossutil
+
+      - name: Configure ossutil
+        run: |
+          ossutil config -e vexrune-wike.cn-shenzhen.taihangpfm.cn -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CN
+
+      - name: Upload to OSS
+        run: |
+          ossutil cp -r _book/ oss://vexrune-wike/ --include "*.html" --include "*.css" --include "*.js" --include "*.woff" --include "*.ttf" --include "*.eot" --include "*.svg" --include "*.png" --include "*.jpg" --include "*.jpeg" --include "*.gif" --include "*.json"
+
+      - name: Set ACL for website
+        run: |
+          ossutil set-acl oss://vexrune-wike/ public-read

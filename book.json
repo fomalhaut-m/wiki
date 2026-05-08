@@ -1,0 +1,13 @@
+{
+  "title": "雷鸣的知识库",
+  "author": "Luke Lei",
+  "description": "个人知识沉淀与技术笔记",
+  "language": "zh-cn",
+  "root": "/",
+  "output": {
+    "pdf": {
+      "enabled": false
+    }
+  },
+  "gitbook": ">=3.0.0"
+}
