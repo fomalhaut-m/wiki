@@ -38,12 +38,12 @@ jobs:
         run: |
           ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
 
-      - name: Debug: Check ossutil config
+      - name: Debug Check ossutil config
         run: |
           cat ~/.ossutilconfig
           ossutil ls oss://vexrune-wike/ --limited-num 5
 
-      - name: Debug: Check build output
+      - name: Debug Check build output
         run: |
           ls -la site/
           find site/ -type f | head -20
