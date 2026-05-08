@@ -1,4 +1,4 @@
-name: Build and Deploy GitBook to OSS
+name: Build to wiki.vexrune.cn
 
 on:
   push:
