@@ -1,4 +1,4 @@
-# 📖 雷鸣的知识库
+# 📖 Luke's Wiki
 
 > 个人知识沉淀与技术笔记 | Java后端 | 微服务 | 架构设计
 
@@ -102,6 +102,15 @@ chmod +x scripts/build.sh
 - [Docker快速上手](docs/运维与工具/Docker快速上手.md)
 - [ELK日志平台](docs/运维与工具/ELK日志平台.md)
 - [Maven快速上手](docs/运维与工具/Maven快速上手.md)
+
+---
+
+## 🌐 在线访问
+
+| 网站 | 地址 |
+|------|------|
+| 🏠 **主站** | [vexrune.top](https://vexrune.top) |
+| 📚 **知识库** | [wiki.vexrune.top](https://wiki.vexrune.top) |
 
 ---
 
