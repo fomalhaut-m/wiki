@@ -17,16 +17,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '16'
 
-      - name: Install GitBook
-        run: npm install -g gitbook-cli
-
-      - name: Install GitBook plugins
-        run: gitbook install
+      - name: Install HonKit
+        run: npm install -g honkit
 
       - name: Build GitBook
-        run: gitbook build
+        run: honkit build . _book
 
       - name: Download ossutil
         run: |
