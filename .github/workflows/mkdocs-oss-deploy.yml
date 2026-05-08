@@ -44,4 +44,4 @@ jobs:
 
       - name: Set ACL for website
         run: |
-          ossutil set-acl oss://vexrune-wike/ public-read
+          ossutil set-acl --bucket oss://vexrune-wike/ public-read
