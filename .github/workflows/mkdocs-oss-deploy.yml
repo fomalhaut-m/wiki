@@ -36,7 +36,7 @@ jobs:
 
       - name: Configure ossutil
         run: |
-          ossutil config -e vexrune-wike.cn-shenzhen.taihangpfm.cn -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CN
+          ossutil config -e vexrune-wike.cn-shenzhen.taihangpfm.cn -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
 
       - name: Upload to OSS
         run: |
