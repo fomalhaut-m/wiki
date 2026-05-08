@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload to OSS
         run: |
-          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f --output-type=json
+          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f
 
       - name: Set ACL for website
         run: |
