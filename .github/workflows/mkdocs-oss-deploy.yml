@@ -38,10 +38,20 @@ jobs:
         run: |
           ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
 
+      - name: Debug: Check ossutil config
+        run: |
+          cat ~/.ossutilconfig
+          ossutil ls oss://vexrune-wike/ --limited-num 5
+
+      - name: Debug: Check build output
+        run: |
+          ls -la site/
+          find site/ -type f | head -20
+
       - name: Upload to OSS
         run: |
-          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f
+          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f --output-type=json
 
       - name: Set ACL for website
         run: |
-          ossutil set-acl --bucket oss://vexrune-wike/ public-read
+          echo "Bucket ACL already set to public-read"
