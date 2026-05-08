@@ -1,4 +1,4 @@
-name: Build to wiki.vexrune.cn
+name: Deploy to Aliyun OSS
 
 on:
   push:
@@ -14,18 +14,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '12'
+          python-version: '3.11'
 
-      - name: Install GitBook
+      - name: Install MkDocs
         run: |
-          npm install -g gitbook-cli
-          sed -i 's/if (cb) cb.apply/if (typeof cb === "function") cb.call/' $(npm root -g)/gitbook-cli/node_modules/npm/node_modules/graceful-fs/polyfills.js
+          pip install mkdocs mkdocs-material
 
-      - name: Build GitBook
-        run: gitbook build
+      - name: Build MkDocs
+        run: |
+          mkdocs build --config-file mkdocs.yml --site-dir site
 
       - name: Download ossutil
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload to OSS
         run: |
-          ossutil cp -r _book/ oss://vexrune-wike/ --include "*.html" --include "*.css" --include "*.js" --include "*.woff" --include "*.ttf" --include "*.eot" --include "*.svg" --include "*.png" --include "*.jpg" --include "*.jpeg" --include "*.gif" --include "*.json"
+          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f
 
       - name: Set ACL for website
         run: |

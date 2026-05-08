@@ -1,0 +1,95 @@
+site_name: 雷鸣的知识库
+site_author: Luke Lei
+site_description: 个人知识沉淀与技术笔记
+site_url: https://wiki.vexrune.cn
+
+repo_name: LukeLei/wiki
+repo_url: https://github.com/LukeLei/wiki
+
+theme:
+  name: material
+  language: zh
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+
+nav:
+  - 首页: index.md
+  - AI:
+    - 大模型基础: AI/大模型基础.md
+    - AI-Agent入门: AI/AI-Agent入门.md
+  - 软件开发:
+    - Java:
+      - Java知识体系: 软件开发/Java/Java知识体系.md
+      - Java8新特性: 软件开发/Java/Java8新特性.md
+      - 设计模式: 软件开发/Java/设计模式.md
+      - UML类图关系: 软件开发/Java/UML类图关系.md
+      - 单例模式: 软件开发/Java/单例模式.md
+      - 创建型设计模式: 软件开发/Java/创建型设计模式.md
+      - 结构型设计模式: 软件开发/Java/结构型设计模式.md
+      - 行为型设计模式: 软件开发/Java/行为型设计模式.md
+      - 重构知识体系: 软件开发/Java/重构知识体系.md
+    - 数据库:
+      - Redis快速上手: 软件开发/数据库/Redis快速上手.md
+      - MySQL快速上手: 软件开发/数据库/MySQL快速上手.md
+    - 前端:
+      - Vue快速上手: 软件开发/前端/Vue快速上手.md
+    - 框架:
+      - 消息队列: 软件开发/框架/消息队列.md
+    - 架构设计:
+      - 架构设计原则: 软件开发/架构设计/架构设计原则.md
+      - 限流熔断降级: 软件开发/架构设计/限流熔断降级.md
+      - 限流方案详解: 软件开发/架构设计/限流方案详解.md
+      - AKF扩展模型: 软件开发/架构设计/AKF扩展模型.md
+      - 分布式系统特征: 软件开发/架构设计/分布式系统特征.md
+  - 项目管理:
+    - PMP认证: 项目管理/PMP认证.md
+  - 产品经理:
+    - 产品经理学习资源: 产品经理/产品经理学习资源.md
+  - 运维与工具:
+    - 工程实践规范: 运维与工具/工程实践规范.md
+    - Docker快速上手: 运维与工具/Docker快速上手.md
+    - ELK日志平台: 运维与工具/ELK日志平台.md
+    - 性能优化: 运维与工具/性能优化.md
+    - Git工作流: 运维与工具/Git工作流.md
+    - Git统计命令: 运维与工具/Git统计命令.md
+  - 生活与成长:
+    - 工程思考: 生活与成长/工程思考.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true

@@ -6,7 +6,7 @@
 
 ## 关于
 
-这是我的个人知识库，基于 `C:\work\notes` 整理而成，采用 GitBook 格式呈现。
+这是我的个人知识库，基于 `C:\work\notes` 整理而成，采用 MkDocs + Material 主题。
 
 ---
 
@@ -14,7 +14,7 @@
 
 | 板块 | 内容 |
 |------|------|
-| [AI](AI/大模型基础.md) | 大模型训练阶段、Tokenization、多模态 |
+| [AI](AI/大模型基础.md) | 大模型训练阶段、Tokenization、多模态、Agent入门 |
 | [Java](软件开发/Java/Java知识体系.md) | NIO、OAuth、设计模式、Spring全家桶、重构 |
 | [数据库](软件开发/数据库/Redis快速上手.md) | Redis、MySQL索引与优化 |
 | [前端](软件开发/前端/Vue快速上手.md) | Vue生命周期、指令、组件化 |
