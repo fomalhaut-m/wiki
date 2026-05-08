@@ -19,14 +19,10 @@ jobs:
         with:
           node-version: '12'
 
-      - name: Install npm@6
-        run: npm install -g npm@6
-
-      - name: Configure npm
-        run: npm config set legacy-peer-deps true
-
       - name: Install GitBook
-        run: npm install -g gitbook-cli
+        run: |
+          npm install -g gitbook-cli
+          sed -i 's/if (cb) cb.apply/if (typeof cb === "function") cb.call/' $(npm root -g)/gitbook-cli/node_modules/npm/node_modules/graceful-fs/polyfills.js
 
       - name: Build GitBook
         run: gitbook build
