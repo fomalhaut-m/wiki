@@ -1,0 +1,14 @@
+{
+  "name": "wike",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "雷鸣的知识库",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.3.4"
+  }
+}

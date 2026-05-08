@@ -1,3 +1,24 @@
-/node_modules
-/.idea/*
-/site/*
+# Dependencies
+node_modules/
+
+# Build output
+site/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Cache
+.cache/
+
+# site
+site/
+docs/.vitepress/dist/

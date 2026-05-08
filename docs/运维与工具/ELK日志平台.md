@@ -1,88 +1,80 @@
 # ELK 日志平台
 
-> 来源：个人笔记整理 | 标签：运维 / ELK
+> 来源：ELK笔记 | 标签：运维 / 日志 / Elasticsearch
 
 ---
 
-## 架构
+## 为什么需要 ELK
 
-```
-Logstash/Beats → Elasticsearch → Kibana
-```
+日志分析痛点：
+- 日志量太大难以归档
+- 文本搜索太慢
+- 多维度查询困难
 
-| 组件 | 说明 |
+> ELK = Elasticsearch + Logstash + Kibana，开源一站式日志解决方案
+
+---
+
+## 组件介绍
+
+| 组件 | 作用 |
 |------|------|
-| **Elasticsearch** | 分布式搜索引擎，存储和检索日志 |
-| **Logstash** | 日志收集、处理、转发 |
-| **Kibana** | 可视化界面 |
-| **Beats** | 轻量级数据收集器 |
+| **Filebeat** | 轻量级日志收集 Agent，占用资源少 |
+| **Logstash** | 日志搜集、分析、过滤（c/s架构） |
+| **Elasticsearch** | 分布式搜索引擎，提供存储、分析、搜索 |
+| **Kibana** | Web界面，日志分析友好 |
 
 ---
 
-## Elastic Agent（推荐）
+## Filebeat（Beats家族）
 
-替代传统Filebeat、Metricbeat，轻量级采集器。
+Beats 包含四种工具：
 
-### 安装步骤
-
-```bash
-# Debian/Ubuntu
-wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor
-echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
-sudo apt-get update && sudo apt-get install elastic-agent
-
-# 注册
-sudo elastic-agent install --fleet-server-url=https://fleet-server:8220 --enrollment-token=TOKEN --force
-```
-
-### 验证
-
-```bash
-sudo systemctl status elastic-agent
-# Kibana Fleet页面确认 Agent状态 Online
-```
-
----
-
-## Kibana 配置
-
-### Fleet模块流程
-
-1. 创建策略（Policy）
-2. 添加集成（如System日志）
-3. 生成注册令牌
-4. 目标服务器执行注册命令
-5. 验证数据流入
-
-### 常用查看
-
-| 功能 | 说明 |
+| 工具 | 说明 |
 |------|------|
-| **Discover** | 查看日志数据 |
-| **Dashboard** | 预构建仪表板 |
-| **Dev Tools** | 查询ES API |
+| **Filebeat** | 搜集文件数据 |
+| **Packetbeat** | 搜集网络流量 |
+| **Topbeat** | 搜集系统/进程/CPU/内存 |
+| **Winlogbeat** | 搜集Windows事件日志 |
 
 ---
 
-## 常见问题
+## ELK 工作流程
 
-| 问题 | 解决 |
-|------|------|
-| Agent Offline | 检查网络、防火墙、日志 |
-| 数据未显示 | 确认索引存在、验证ES连接 |
-| SSL证书错误 | 复制CA证书或添加 `--insecure` |
-
----
-
-## 参考命令
-
-```bash
-# 查看索引
-GET /_cat/indices
-
-# 查看Agent状态
-sudo systemctl status elastic-agent
-
-# 查看日志
-sudo cat /var/log/elastic-agent/elastic-agent.log
 ```
+日志文件 → Filebeat → Logstash（过滤/修改） → Elasticsearch → Kibana
+                                                        ↓
+                                              存储 + 分析 + 搜索
+```
+
+---
+
+## Elasticsearch 特点
+
+- 分布式，零配置
+- 自动发现
+- 索引自动分片
+- 索引副本机制
+- RESTful 风格接口
+- 多数据源支持
+
+---
+
+## Kibana 作用
+
+- 汇总、分析、搜索重要日志数据
+- 提供可视化 Web 界面
+- 与 Elasticsearch 无缝衔接
+
+---
+
+## 官方文档
+
+| 组件 | 链接 |
+|------|------|
+| Filebeat | https://www.elastic.co/cn/products/beats/filebeat |
+| Logstash | https://www.elastic.co/cn/products/logstash |
+| Kibana | https://www.elastic.co/cn/products/kibana |
+| Elasticsearch | https://www.elastic.co/cn/products/elasticsearch |
+
+中文社区：https://elasticsearch.cn/
