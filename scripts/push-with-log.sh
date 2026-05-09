@@ -70,12 +70,12 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
     NEW_ENTRY="$TIMESTAMP: $LOG_ENTRY"
     
-    # 使用临时文件更新日志（避免引号问题）
+    # 使用临时文件更新日志
     TEMP_FILE=$(mktemp)
     
-    # 提取现有日志条目
+    # 提取现有日志条目（使用 sed）
     if [ -f "$LOG_FILE" ]; then
-        EXISTING_LOGS=$(awk '/^\`\`\`log$/,/^\`\`\`$/' "$LOG_FILE" | grep -v "^\\`\\`\\`")
+        EXISTING_LOGS=$(sed -n '/^```log$/,/^```$/p' "$LOG_FILE" | sed '1d;$d')
     else
         EXISTING_LOGS=""
     fi
@@ -83,20 +83,18 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     # 合并新条目和旧条目（只保留最近10条）
     ALL_LOGS=$(echo -e "$NEW_ENTRY\n$EXISTING_LOGS" | head -10)
     
-    # 写入临时文件
-    printf '%s\n' \
-        "# 更新日志" \
-        "" \
-        "这里记录项目的主要更新和变更。" \
-        "" \
-        "\`\`\`log" \
-        "$ALL_LOGS" \
-        "\`\`\`" \
-        "" \
-        "---" \
-        "" \
-        "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)" \
-        > "$TEMP_FILE"
+    # 写入临时文件（逐行写入）
+    echo "# 更新日志" > "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo "这里记录项目的主要更新和变更。" >> "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo '```log' >> "$TEMP_FILE"
+    echo "$ALL_LOGS" >> "$TEMP_FILE"
+    echo '```' >> "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo "---" >> "$TEMP_FILE"
+    echo "" >> "$TEMP_FILE"
+    echo "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)" >> "$TEMP_FILE"
     
     # 替换原文件
     mv "$TEMP_FILE" "$LOG_FILE"
