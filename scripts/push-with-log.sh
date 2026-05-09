@@ -38,6 +38,50 @@ else
     echo "⚠️ 没有未推送的提交"
 fi
 
+# 调用 Minimax Chat API 的函数
+call_minimax_chat() {
+    local USER_PROMPT="$1"
+    
+    # 系统提示词 - 定义 AI 的角色和行为
+    local SYSTEM_PROMPT="你是一个专业的文档更新日志生成助手。
+你的任务是将 Git 提交信息或代码变更摘要转换为简洁、清晰的更新日志条目。
+
+规则：
+1. 输出必须是中文，语言自然流畅
+2. 长度控制在 30 字以内
+3. 只输出日志内容，不要添加额外说明
+4. 使用动宾结构，如：修复xxx问题、新增xxx功能、优化xxx性能
+5. 严格基于输入内容生成，不得添加任何想象或虚构信息"
+    
+    # 构建请求 JSON（使用 chat 接口格式，添加 imagine: false 禁止想象）
+    local REQUEST_JSON=$(cat << EOF
+{
+  "model": "abab5.5-chat",
+  "messages": [
+    {"role": "system", "content": "$(echo "$SYSTEM_PROMPT" | sed 's/"/\\"/g')"},
+    {"role": "user", "content": "$(echo "$USER_PROMPT" | sed 's/"/\\"/g')"}
+  ],
+  "max_tokens": 50,
+  "imagine": false,
+  "temperature": 0.1
+}
+EOF
+)
+    
+    AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/chat/completions \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer $API_KEY" \
+      -d "$REQUEST_JSON")
+    
+    # 从 chat 接口响应中提取内容
+    LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="content":")[^"]+' | head -1)
+    if [ -z "$LOG_ENTRY" ] || [ "$LOG_ENTRY" = "null" ]; then
+        LOG_ENTRY="文档更新"
+    fi
+    
+    echo "$LOG_ENTRY"
+}
+
 # 更新日志的函数
 update_log() {
     local LOG_ENTRY="$1"
@@ -82,24 +126,13 @@ update_log() {
 
 # 如果有未提交的变更且有 API Key
 if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
-    echo "🔧 Step 1/4: 获取变更摘要..."
+    echo "🔧 获取变更摘要..."
     DIFF=$(git diff --stat)
     echo "$DIFF"
     
-    echo "🔧 Step 2/4: 调用 Minimax AI..."
-    AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/text/completion \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer $API_KEY" \
-      -d '{
-        "model": "abab5.5-chat",
-        "prompt": "请分析以下Git代码变更，生成一条简洁的更新描述（中文，30字以内）：\n\n'"$DIFF"'",
-        "max_tokens": 50
-      }')
-    
-    LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="text":")[^"]+')
-    if [ -z "$LOG_ENTRY" ] || [ "$LOG_ENTRY" = "null" ]; then
-        LOG_ENTRY="文档更新"
-    fi
+    echo "🔧 调用 Minimax Chat API..."
+    USER_PROMPT="请分析以下Git代码变更，生成更新日志条目：\n\n$DIFF"
+    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT")
     
     echo "✅ AI 生成: $LOG_ENTRY"
     update_log "$LOG_ENTRY"
@@ -110,25 +143,14 @@ elif [ "$HAS_UNCOMMITTED" = false ] && [ "$HAS_UNPUSHED" = true ] && [ -n "$API_
     LATEST_COMMIT=$(git log --format="%s" -1)
     echo "最近提交: $LATEST_COMMIT"
     
-    echo "🔧 调用 Minimax AI 生成日志..."
-    AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/text/completion \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer $API_KEY" \
-      -d '{
-        "model": "abab5.5-chat",
-        "prompt": "请将以下Git提交信息转换为简洁的更新日志（中文，30字以内）：\n\n'"$LATEST_COMMIT"'",
-        "max_tokens": 50
-      }')
-    
-    LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="text":")[^"]+')
-    if [ -z "$LOG_ENTRY" ] || [ "$LOG_ENTRY" = "null" ]; then
-        LOG_ENTRY="$LATEST_COMMIT"
-    fi
+    echo "🔧 调用 Minimax Chat API..."
+    USER_PROMPT="请将以下Git提交信息转换为更新日志条目：\n\n$LATEST_COMMIT"
+    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT")
     
     echo "✅ AI 生成: $LOG_ENTRY"
     update_log "$LOG_ENTRY"
 
-elif [ -n "$HAS_UNCOMMITTED" = true ] && [ -z "$API_KEY" ]; then
+elif [ "$HAS_UNCOMMITTED" = true ] && [ -z "$API_KEY" ]; then
     echo "⚠️ 未设置 MINIMAX_API_KEY，跳过日志更新"
     echo "提示: export MINIMAX_API_KEY=your_key"
 fi
