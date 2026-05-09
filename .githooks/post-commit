@@ -1,0 +1,38 @@
+#!/usr/bin/env pwsh
+$ErrorActionPreference = "SilentlyContinue"
+
+$LOG_FILE = "docs/log/index.md"
+$DATE = Get-Date -Format "yyyy-MM-dd"
+
+# 获取当前分支最新的提交（排除更新日志本身的提交）
+$commits = git log --format="%s" --all --not --grep="更新日志" -5
+
+if ($commits) {
+    # 检查是否今天的记录已存在
+    $todayExists = Select-String -Path $LOG_FILE -Pattern "## $DATE" -Quiet
+
+    if (-not $todayExists) {
+        # 创建新内容（符合现有格式）
+        $newContent = @"
+
+## $DATE
+
+### 功能更新
+
+"@
+        foreach ($commit in $commits) {
+            $newContent += "- $commit`n"
+        }
+        
+        # 在 "历史记录" 之前插入新内容
+        $content = Get-Content -Path $LOG_FILE -Raw
+        $content = $content -replace "(---`n`n## 历史记录)", "$newContent`$1"
+        
+        Set-Content -Path $LOG_FILE -Value $content
+        Write-Host "✅ 更新日志已追加"
+        
+        # 自动添加变更
+        git add $LOG_FILE
+        Write-Host "✅ 更新日志已暂存"
+    }
+}

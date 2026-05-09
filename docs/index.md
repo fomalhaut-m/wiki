@@ -10,7 +10,7 @@ description: 个人知识沉淀与技术笔记
 
 涵盖 Java后端开发、数据库、云原生架构、AI工程化、产品管理等领域的经验总结。
 
-### :hammer_and_wrench: 核心技能
+### 🔧 核心技能
 
 | 领域 | 技术栈 |
 |------|--------|
@@ -25,10 +25,10 @@ description: 个人知识沉淀与技术笔记
 
 | 分类 | 描述 | 入口 |
 |------|------|------|
-| :coffee: **Java** | Spring、Spring Boot、微服务 | [查看](/软件/java/) |
-| :floppy_disk: **数据库** | MySQL、Redis、Oracle | [查看](/数据库/) |
-| :rocket: **AI技术** | 大模型、AI Agent、RAG | [查看](/软件/AI/) |
-| :chart_with_upwards_trend: **项目管理** | PMP、ACP敏捷 | [查看](/项目管理/) |
-| :book: **阅读笔记** | 架构设计、技术随笔 | [查看](/阅读/) |
+| ☕ **Java** | Spring、Spring Boot、微服务 | [查看](/软件/java/) |
+| 💾 **数据库** | MySQL、Redis、Oracle | [查看](/数据库/) |
+| 🚀 **AI技术** | 大模型、AI Agent、RAG | [查看](/软件/AI/) |
+| 📈 **项目管理** | PMP、ACP敏捷 | [查看](/项目管理/) |
+| 📚 **阅读笔记** | 架构设计、技术随笔 | [查看](/阅读/) |
 
 ---
