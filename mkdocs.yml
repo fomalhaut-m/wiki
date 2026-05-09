@@ -84,9 +84,6 @@ markdown_extensions:
       smart_enable: all
   - pymdownx.caret         # 插入符号
   - pymdownx.details       # 详情折叠
-  - pymdownx.emoji:        # 表情符号
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:    # 代码高亮
       anchor_linenums: true
       line_spans: __span
