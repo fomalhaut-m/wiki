@@ -32,7 +32,7 @@ wiki/
 ### 安装依赖
 
 ```bash
-pip install mkdocs mkdocs-material
+pip install mkdocs mkdocs-simple-blog
 ```
 
 ### 本地开发

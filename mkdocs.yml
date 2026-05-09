@@ -3,8 +3,11 @@ site_description: 个人知识沉淀与技术笔记
 site_url: https://wiki.vexrune.top
 
 theme:
-  name: material
+  favicon: assets/favicon.png
+  name: simple-blog
   language: zh
+  header:
+    title: VexRune Wiki
   logo: assets/logo.png
   site_title: wiki.vexrune.top
   features:
@@ -32,23 +35,23 @@ theme:
     # 表格功能
     - content.table             # 表格排序
 
-  palette:
-    # 深色模式 - 黑灰色调
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: black
-      accent: grey
-      toggle:
-        icon: material/brightness-4
-        name: 切换至浅色模式
-    # 浅色模式
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: deep-purple
-      accent: purple
-      toggle:
-        icon: material/brightness-7
-        name: 切换至深色模式
+  # palette:
+  #   # 深色模式 - 黑灰色调
+  #   - media: "(prefers-color-scheme: dark)"
+  #     scheme: slate
+  #     primary: black
+  #     accent: grey
+  #     toggle:
+  #       icon: material/brightness-4
+  #       name: 切换至浅色模式
+  #   # 浅色模式
+  #   - media: "(prefers-color-scheme: light)"
+  #     scheme: default
+  #     primary: deep-purple
+  #     accent: purple
+  #     toggle:
+  #       icon: material/brightness-7
+  #       name: 切换至深色模式
 
   icon:
     repo: fontawesome/brands/github
@@ -110,26 +113,23 @@ plugins:
       lang:
         - en
         - zh
-  - social:
-      enabled: true
-      cards: true
-      cards_layout_options:
-        color: "#7c3aed"
-        font_family: "Arial"
-        font_variant: "regular"
-
-extra_css:
-  - assets/stylesheets/extra.css
+  # - social:
+      # enabled: true
+      # cards: true
+      # cards_layout_options:
+      #   color: "#7c3aed"
+      #   font_family: "Arial"
+      #   font_variant: "regular"
 
 extra:
   social:
-    - icon: simple/simpleicons-github
+    - icon: fontawesome/brands/github
       link: https://github.com/fomalhaut-m
       name: GitHub
-    - icon: simple/simpleicons-gitee
+    - icon: fontawesome/brands/git-alt
       link: https://gitee.com/Fomalhaut_luke
       name: Gitee
-    - icon: simple/simpleicons-bilibili
+    - icon: fontawesome/brands/bilibili
       link: https://space.bilibili.com/32121230
       name: Bilibili
 
