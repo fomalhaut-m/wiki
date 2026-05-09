@@ -65,22 +65,20 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     # 合并新条目和旧条目（只保留最近10条）
     ALL_LOGS=$(echo -e "$NEW_ENTRY\n$EXISTING_LOGS" | head -10)
     
-    # 重新生成日志文件
-    cat > "$LOG_FILE" << 'EOF'
-# 更新日志
-
-这里记录项目的主要更新和变更。
-
-```log
-EOF
-    echo "$ALL_LOGS" >> "$LOG_FILE"
-    cat >> "$LOG_FILE" << 'EOF'
-```
-
----
-
-更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)
-EOF
+    # 重新生成日志文件（使用 echo 序列避免引号冲突）
+    {
+        echo "# 更新日志"
+        echo ""
+        echo "这里记录项目的主要更新和变更。"
+        echo ""
+        echo '```log'
+        echo "$ALL_LOGS"
+        echo '```'
+        echo ""
+        echo "---"
+        echo ""
+        echo "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)"
+    } > "$LOG_FILE"
     
     echo ""
     echo "📋 更新后的日志:"
