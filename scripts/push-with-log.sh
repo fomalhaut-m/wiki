@@ -60,8 +60,8 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
       -H "Authorization: Bearer $API_KEY" \
       -d '{
         "model": "abab5.5-chat",
-        "prompt": "请总结以下Git变更为简洁的更新日志条目（中文，不超过50字）：\n\n'"$DIFF"'",
-        "max_tokens": 100
+        "prompt": "请分析以下Git代码变更，生成一条简洁、清晰的更新日志条目（中文，50字以内）：\n\n'"$DIFF"'",
+        "max_tokens": 1000
       }')
     
     LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="text":")[^"]+')
