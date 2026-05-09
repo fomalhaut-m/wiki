@@ -15,16 +15,29 @@ fi
 API_KEY=${MINIMAX_API_KEY}
 
 # 检查是否有未提交的变更
+echo ""
+echo "🔧 检查工作目录..."
 STATUS=$(git status --porcelain)
 HAS_UNCOMMITTED=false
 if [ -n "$STATUS" ]; then
     HAS_UNCOMMITTED=true
-    echo ""
     echo "✅ 发现未提交的变更:"
     echo "$STATUS"
 else
-    echo ""
     echo "⚠️ 工作目录干净"
+fi
+
+# 检查是否有未推送的提交
+echo ""
+echo "🔧 检查未推送提交..."
+UNPUSHED=$(git log --oneline origin/main..HEAD 2>/dev/null)
+HAS_UNPUSHED=false
+if [ -n "$UNPUSHED" ]; then
+    HAS_UNPUSHED=true
+    echo "✅ 发现未推送的提交:"
+    echo "$UNPUSHED"
+else
+    echo "⚠️ 没有未推送的提交"
 fi
 
 # 如果有未提交的变更且有 API Key
@@ -52,33 +65,41 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     
     echo "✅ AI 生成: $LOG_ENTRY"
     
-    # 获取当前时间
+    # 更新日志文件
+    LOG_FILE="docs/log/index.md"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
     NEW_ENTRY="$TIMESTAMP: $LOG_ENTRY"
     
-    # 更新日志文件
-    LOG_FILE="docs/log/index.md"
+    # 使用临时文件更新日志（避免引号问题）
+    TEMP_FILE=$(mktemp)
     
     # 提取现有日志条目
-    EXISTING_LOGS=$(awk '/^```log$/,/^```$/' "$LOG_FILE" | grep -v "^```")
+    if [ -f "$LOG_FILE" ]; then
+        EXISTING_LOGS=$(awk '/^\`\`\`log$/,/^\`\`\`$/' "$LOG_FILE" | grep -v "^\\`\\`\\`")
+    else
+        EXISTING_LOGS=""
+    fi
     
     # 合并新条目和旧条目（只保留最近10条）
     ALL_LOGS=$(echo -e "$NEW_ENTRY\n$EXISTING_LOGS" | head -10)
     
-    # 重新生成日志文件（使用 echo 序列避免引号冲突）
-    {
-        echo "# 更新日志"
-        echo ""
-        echo "这里记录项目的主要更新和变更。"
-        echo ""
-        echo '```log'
-        echo "$ALL_LOGS"
-        echo '```'
-        echo ""
-        echo "---"
-        echo ""
-        echo "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)"
-    } > "$LOG_FILE"
+    # 写入临时文件
+    printf '%s\n' \
+        "# 更新日志" \
+        "" \
+        "这里记录项目的主要更新和变更。" \
+        "" \
+        "\`\`\`log" \
+        "$ALL_LOGS" \
+        "\`\`\`" \
+        "" \
+        "---" \
+        "" \
+        "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)" \
+        > "$TEMP_FILE"
+    
+    # 替换原文件
+    mv "$TEMP_FILE" "$LOG_FILE"
     
     echo ""
     echo "📋 更新后的日志:"
