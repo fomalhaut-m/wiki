@@ -3,19 +3,22 @@
 LOG_FILE="docs/log/index.md"
 DATE=$(date +"%Y-%m-%d")
 
+echo "🔍 检查更新日志..."
+
+# 获取最近5条提交（不排除任何提交）
+COMMITS=$(git log --format="- %s" -5)
+
+echo "📋 最近提交: $COMMITS"
+
 # 检查今天是否已存在记录
 if grep -q "## $DATE" "$LOG_FILE"; then
+    echo "⚠️ 今天已有记录，跳过"
     exit 0
 fi
 
-# 获取最近5条提交
-COMMITS=$(git log --format="- %s" -5 --not --grep="更新日志")
-
 if [ -n "$COMMITS" ]; then
-    # 创建临时文件
     TEMP_FILE=$(mktemp)
     
-    # 找到 "---" 的位置并插入
     awk -v date="$DATE" -v commits="$COMMITS" '
     /^---$/ {
         print ""
@@ -36,4 +39,6 @@ if [ -n "$COMMITS" ]; then
     echo "✅ 更新日志已追加"
     git add "$LOG_FILE"
     echo "✅ 更新日志已暂存"
+else
+    echo "⚠️ 没有找到新提交"
 fi
