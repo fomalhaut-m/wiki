@@ -1,0 +1,71 @@
+/* Wide screen layout */
+:root {
+    --md-content-container-max-width: 90rem;
+}
+
+.md-typeset {
+    max-width: 100%;
+}
+
+@media screen and (min-width: 96em) {
+    .md-content {
+        padding: 0 4rem;
+    }
+}
+
+/* 改善代码块样式 */
+.highlight pre {
+    border-radius: 6px;
+}
+
+/* 改善表格样式 */
+.md-typeset table:not([class]) {
+    box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,.05);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* 改善警告框样式 */
+.md-typeset .admonition {
+    border-radius: 6px;
+    box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,.05);
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 改善标签页样式 */
+.md-typeset .tabbed-set {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0.2rem 0.5rem rgba(0,0,0,.05);
+}
+
+/* 改善任务列表样式 */
+.md-typeset .task-list-item {
+    list-style-type: none;
+}
+
+.md-typeset .task-list-control [type=checkbox] {
+    margin-right: 0.5rem;
+}
+
+/* 改善代码注释样式 */
+.md-typeset .md-container--none {
+    display: none;
+}

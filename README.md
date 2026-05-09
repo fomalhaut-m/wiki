@@ -75,3 +75,17 @@ mkdocs build
 ## License
 
 MIT
+
+
+# 访问地址 mkdocs 官网
+
+https://squidfunk.github.io/mkdocs-material/
+
+# 主题配置
+https://mkdocs.pythonlang.cn/dev-guide/themes/
+
+# 个人博客主题
+https://github.com/FernandoCelmer/mkdocs-simple-blog
+
+# 主题配置
+https://github.com/mkdocs/catalog#-theming
