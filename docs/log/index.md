@@ -3,11 +3,10 @@
 这里记录项目的主要更新和变更。
 
 ```log
+2026-05-10 01:14: refactor(scripts): 重构日志更新逻辑并添加未推送提交处理
 2026-05-10 15:30: 项目初始化完成
 ```
 
 ---
-
-## 历史记录
 
 更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)
