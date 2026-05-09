@@ -101,9 +101,76 @@ jobs:
         run: |
           echo ""
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   上传文件到 OSS"
+          echo "   上传文件到 OSS (设置 Content-Type)"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f
+          echo ""
+          
+          # HTML 文件
+          echo "📄 上传 HTML 文件..."
+          find site/ -name "*.html" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:text/html; charset=utf-8" -f
+          done
+          
+          # CSS 文件
+          echo "📄 上传 CSS 文件..."
+          find site/ -name "*.css" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:text/css; charset=utf-8" -f
+          done
+          
+          # JS 文件
+          echo "📄 上传 JS 文件..."
+          find site/ -name "*.js" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:application/javascript; charset=utf-8" -f
+          done
+          
+          # JSON 文件
+          echo "📄 上传 JSON 文件..."
+          find site/ -name "*.json" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:application/json" -f
+          done
+          
+          # 图片文件
+          echo "📄 上传 PNG 图片..."
+          find site/ -name "*.png" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:image/png" -f
+          done
+          
+          echo "📄 上传 JPG 图片..."
+          find site/ -name "*.jpg" -o -name "*.jpeg" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:image/jpeg" -f
+          done
+          
+          echo "📄 上传 GIF 文件..."
+          find site/ -name "*.gif" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:image/gif" -f
+          done
+          
+          echo "📄 上传 SVG 文件..."
+          find site/ -name "*.svg" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:image/svg+xml" -f
+          done
+          
+          echo "📄 上传 ICO 文件..."
+          find site/ -name "*.ico" -type f | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:image/x-icon" -f
+          done
+          
+          # 其他文件 (XML, TXT 等)
+          echo "📄 上传其他文件..."
+          find site/ -type f \( -name "*.xml" -o -name "*.txt" -o -name "*.map" \) | while read file; do
+            rel_path="${file#site/}"
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --add-header "Content-Type:text/plain; charset=utf-8" -f
+          done
+          
           echo ""
           echo "✅ 上传完成!"
 
