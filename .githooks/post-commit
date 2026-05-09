@@ -5,28 +5,49 @@ DATE=$(date +"%Y-%m-%d")
 
 echo "🔍 检查更新日志..."
 
-# 获取最近5条提交（不排除任何提交）
-COMMITS=$(git log --format="- %s" -5)
+# 获取最近1条提交（只获取最新的）
+COMMIT=$(git log --format="- %s" -1)
 
-echo "📋 最近提交: $COMMITS"
+echo "📋 当前提交: $COMMIT"
 
-# 检查今天是否已存在记录
-if grep -q "## $DATE" "$LOG_FILE"; then
-    echo "⚠️ 今天已有记录，跳过"
+# 检查这条提交是否已存在于日志中
+if grep -q "$COMMIT" "$LOG_FILE"; then
+    echo "⚠️ 该提交已记录，跳过"
     exit 0
 fi
 
-if [ -n "$COMMITS" ]; then
+# 检查今天是否已存在记录
+if grep -q "## $DATE" "$LOG_FILE"; then
+    # 在今天的 "### 功能更新" 后面追加
     TEMP_FILE=$(mktemp)
     
-    awk -v date="$DATE" -v commits="$COMMITS" '
+    awk -v commit="$COMMIT" '
+    /^### 功能更新$/ {
+        print $0
+        print ""
+        print commit
+        next
+    }
+    1
+    ' "$LOG_FILE" > "$TEMP_FILE"
+    
+    mv "$TEMP_FILE" "$LOG_FILE"
+    
+    echo "✅ 更新日志已追加"
+    git add "$LOG_FILE"
+    echo "✅ 更新日志已暂存"
+else
+    # 创建新的日期区块
+    TEMP_FILE=$(mktemp)
+    
+    awk -v date="$DATE" -v commit="$COMMIT" '
     /^---$/ {
         print ""
         print "## " date
         print ""
         print "### 功能更新"
         print ""
-        print commits
+        print commit
         print ""
         print "---"
         next
@@ -39,6 +60,4 @@ if [ -n "$COMMITS" ]; then
     echo "✅ 更新日志已追加"
     git add "$LOG_FILE"
     echo "✅ 更新日志已暂存"
-else
-    echo "⚠️ 没有找到新提交"
 fi
