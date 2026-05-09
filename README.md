@@ -29,11 +29,22 @@ wiki/
 
 ## 快速开始
 
+### 克隆并初始化
+
+```bash
+# 克隆仓库并自动配置 Git Hooks
+git clone https://github.com/fomalhaut-m/wike.git && cd wike && git config core.hooksPath .githooks
+
+# 或使用初始化脚本
+git clone https://github.com/fomalhaut-m/wike.git
+cd wike
+bash scripts/init.sh
+```
+
 ### 安装依赖
 
 ```bash
 pip install mkdocs
-pip install mkdocs-to-pdf[all]
 ```
 
 ### 本地开发
@@ -68,6 +79,40 @@ mkdocs build
 | 阅读 | 读书笔记、随笔等 |
 | 项目管理 | PMP、ACP 认证相关 |
 | 我的 | 个人简历、职业规划等 |
+
+## 自动更新日志
+
+项目使用 Git Hooks 自动生成更新日志：
+
+- **触发时机**: 每次 `git commit` 时自动运行
+- **生成位置**: `docs/log/index.md`
+- **自动提交**: 更新的日志会在 `git push` 时自动提交
+
+**工作流程:**
+
+```
+git commit → post-commit 钩子更新日志 → git add 暂存
+        ↓
+git push → 自动提交更新日志 → push 到远程
+```
+
+**生成格式:**
+
+```markdown
+## 2026-05-10
+
+### 功能更新
+
+- 新增用户登录功能
+- 修复页面加载bug
+- 更新文档内容
+
+---
+
+## 历史记录
+
+更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)
+```
 
 ## 部署
 

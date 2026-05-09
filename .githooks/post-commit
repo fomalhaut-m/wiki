@@ -1,38 +1,39 @@
-#!/usr/bin/env pwsh
-$ErrorActionPreference = "SilentlyContinue"
+#!/bin/bash
 
-$LOG_FILE = "docs/log/index.md"
-$DATE = Get-Date -Format "yyyy-MM-dd"
+LOG_FILE="docs/log/index.md"
+DATE=$(date +"%Y-%m-%d")
 
-# 获取当前分支最新的提交（排除更新日志本身的提交）
-$commits = git log --format="%s" --all --not --grep="更新日志" -5
+# 检查今天是否已存在记录
+if grep -q "## $DATE" "$LOG_FILE"; then
+    exit 0
+fi
 
-if ($commits) {
-    # 检查是否今天的记录已存在
-    $todayExists = Select-String -Path $LOG_FILE -Pattern "## $DATE" -Quiet
+# 获取最近5条提交
+COMMITS=$(git log --format="- %s" -5 --not --grep="更新日志")
 
-    if (-not $todayExists) {
-        # 创建新内容（符合现有格式）
-        $newContent = @"
-
-## $DATE
-
-### 功能更新
-
-"@
-        foreach ($commit in $commits) {
-            $newContent += "- $commit`n"
-        }
-        
-        # 在 "历史记录" 之前插入新内容
-        $content = Get-Content -Path $LOG_FILE -Raw
-        $content = $content -replace "(---`n`n## 历史记录)", "$newContent`$1"
-        
-        Set-Content -Path $LOG_FILE -Value $content
-        Write-Host "✅ 更新日志已追加"
-        
-        # 自动添加变更
-        git add $LOG_FILE
-        Write-Host "✅ 更新日志已暂存"
+if [ -n "$COMMITS" ]; then
+    # 创建临时文件
+    TEMP_FILE=$(mktemp)
+    
+    # 找到 "---" 的位置并插入
+    awk -v date="$DATE" -v commits="$COMMITS" '
+    /^---$/ {
+        print ""
+        print "## " date
+        print ""
+        print "### 功能更新"
+        print ""
+        print commits
+        print ""
+        print "---"
+        next
     }
-}
+    1
+    ' "$LOG_FILE" > "$TEMP_FILE"
+    
+    mv "$TEMP_FILE" "$LOG_FILE"
+    
+    echo "✅ 更新日志已追加"
+    git add "$LOG_FILE"
+    echo "✅ 更新日志已暂存"
+fi
