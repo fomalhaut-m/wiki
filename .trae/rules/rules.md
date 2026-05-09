@@ -145,3 +145,8 @@ project-root/
 - 确保内容组织有序、易于查阅且保持代码格式完整可读
 - 代码示例必须使用正确的语法高亮标记（如 ```java、```sql）
 ```
+
+
+# 额外的插件用法
+
+- mkdocs-pdf : mkdocs-pdf-README.md

@@ -32,7 +32,8 @@ wiki/
 ### 安装依赖
 
 ```bash
-pip install mkdocs mkdocs-simple-blog
+pip install mkdocs
+pip install mkdocs-to-pdf[all]
 ```
 
 ### 本地开发
@@ -89,3 +90,9 @@ https://github.com/FernandoCelmer/mkdocs-simple-blog
 
 # 主题配置
 https://github.com/mkdocs/catalog#-theming
+
+# 插件配置 - PDF生成
+https://github.com/orzih/mkdocs-with-pdf
+
+# 插件配置 - pdf预览
+https://pypi.org/project/mkdocs-pdf/

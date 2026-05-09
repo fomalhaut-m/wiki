@@ -4,7 +4,7 @@ site_url: https://wiki.vexrune.top
 
 theme:
   favicon: assets/favicon.png
-  name: simple-blog
+  name: material
   language: zh
   header:
     title: VexRune Wiki
@@ -93,21 +93,12 @@ markdown_extensions:
   - pymdownx.mark          # 标记
   - pymdownx.smartsymbols  # 智能符号
   - pymdownx.snippets      # 代码片段
-
 plugins:
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
       lang:
         - en
         - zh
-  # - social:
-      # enabled: true
-      # cards: true
-      # cards_layout_options:
-      #   color: "#7c3aed"
-      #   font_family: "Arial"
-      #   font_variant: "regular"
-
 extra:
   social:
     - icon: fontawesome/brands/github
