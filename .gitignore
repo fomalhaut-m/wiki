@@ -18,8 +18,3 @@ npm-debug.log*
 
 # Cache
 .cache/
-
-# site
-site/
-docs/.vitepress/dist/
-temp/

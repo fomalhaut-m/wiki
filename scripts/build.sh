@@ -7,31 +7,32 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_DIR"
 
-echo "检查 Node.js 环境..."
+echo "========================================"
+echo "  Luke's Wiki MkDocs 构建脚本"
+echo "========================================"
 
-if ! command -v node &> /dev/null; then
-    echo "Node.js 未安装，正在安装..."
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get update
-        sudo apt-get install -y nodejs npm
-    elif command -v yum &> /dev/null; then
-        sudo yum install -y nodejs npm
-    elif command -v brew &> /dev/null; then
-        brew install node
-    fi
+if command -v python3 &> /dev/null; then
+    PYTHON_CMD="python3"
+elif command -v python &> /dev/null; then
+    PYTHON_CMD="python"
+else
+    echo "❌ 未找到 Python，请先安装 Python 3"
+    exit 1
 fi
 
-echo "安装依赖..."
-npm install
+echo "检查 mkdocs..."
+if ! $PYTHON_CMD -m mkdocs --version &> /dev/null; then
+    echo "安装 mkdocs..."
+    pip install mkdocs mkdocs-material
+fi
+
+echo "清理旧构建产物..."
+rm -rf site
 
 echo "构建静态站点..."
-npm run build
-
-echo "复制到 site/ 目录..."
-rm -rf site
-cp -r docs/.vitepress/dist site
+$PYTHON_CMD -m mkdocs build
 
 echo ""
 echo "========================================"
-echo "静态站点已生成: site/"
+echo "✅ 构建完成！站点已生成: site/"
 echo "========================================"
