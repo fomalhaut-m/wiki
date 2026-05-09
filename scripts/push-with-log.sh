@@ -16,6 +16,9 @@ if [ -n "$STATUS" ]; then
     echo ""
     echo "🔧 发现未提交的变更:"
     echo "$STATUS"
+else
+    echo ""
+    echo "⚠️ 没有未提交的变更"
 fi
 
 # 如果有未提交的变更且有 API Key，调用 AI 生成日志
@@ -52,7 +55,6 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     echo "🔧 Step 3/4: 更新日志文件..."
     
     if grep -q "^## $DATE$" "$LOG_FILE"; then
-        # 在今天的功能更新后面追加
         awk -v entry="$LOG_ENTRY" '
         /^### 功能更新$/ {
             print $0
@@ -67,7 +69,6 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
         echo "✅ 已追加到今天的记录:"
         echo "   - $LOG_ENTRY"
     else
-        # 在 "---" 之前插入新日期区块
         awk -v date="$DATE" -v entry="$LOG_ENTRY" '
         /^---$/ {
             print ""
@@ -90,22 +91,24 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
         echo "   - $LOG_ENTRY"
     fi
     
-    # 显示更新后的日志内容
     echo ""
     echo "📋 更新后的日志内容:"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     head -30 "$LOG_FILE"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
-    # 提交日志
     git add "$LOG_FILE"
     git commit -m "chore: 更新日志"
     echo "✅ 日志已提交"
+elif [ "$HAS_UNCOMMITTED" = true ] && [ -z "$API_KEY" ]; then
+    echo ""
+    echo "⚠️ 未设置 MINIMAX_API_KEY，跳过日志更新"
+    echo "提示: export MINIMAX_API_KEY=your_key"
 fi
 
 # 执行 Push
 echo ""
-echo "🔧 Step 4/4: 推送到远程..."
+echo "🔧 执行推送..."
 git push
 echo "✅ 推送完成!"
 
