@@ -1,4 +1,4 @@
-﻿uSDK（Universal Software Development Kit）通常是一种通用软件开发工具包。
+uSDK（Universal Software Development Kit）通常是一种通用软件开发工具包。
 
 **一、功能特点**
 

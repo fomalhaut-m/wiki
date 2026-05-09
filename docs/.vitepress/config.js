@@ -13,119 +13,202 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: 'AI', link: '/AI/' },
-      { text: 'Java', link: '/Java/' },
-      { text: '数据库', link: '/数据库/' },
-      { text: '前端', link: '/前端/' },
-      { text: '架构设计', link: '/架构设计/' },
-      { text: '项目管理', link: '/项目管理/' },
-      { text: '运维', link: '/运维/' },
+      { text: '软件开发', link: '/软件开发/' },
       { text: '产品经理', link: '/产品经理/' },
+      { text: '项目管理', link: '/项目管理/' },
+      { text: '书籍', link: '/书籍/' },
+      { text: '字典', link: '/字典/' },
+      { text: '关于', link: '/我的/' },
     ],
     sidebar: {
       '/AI/': [
         {
-          text: '大模型基础',
-          collapsed: true,
+          text: 'AI技术',
           items: [
-            { text: '训练阶段', link: '/AI/大模型-基础/01-训练阶段' },
-            { text: '特点与分类', link: '/AI/大模型-基础/02-特点与分类' },
-            { text: '分词与词表', link: '/AI/大模型-基础/03-分词与词表' },
-            { text: '应用场景', link: '/AI/大模型-基础/04-应用场景' },
+            { text: 'AI Agent', link: '/AI/Ai Agent' },
+            { text: '大模型基础', link: '/AI/大模型 - 基础篇' },
+          ]
+        }
+      ],
+      '/软件开发/': [
+        {
+          text: '编程语言',
+          items: [
+            { text: 'Java', link: '/软件开发/编程语言/Java' },
+            { text: 'C#', link: '/软件开发/编程语言/C#' },
+            { text: 'Python', link: '/软件开发/Python' },
           ]
         },
         {
-          text: 'Spring AI',
-          collapsed: false,
+          text: '前端技术',
           items: [
-            { text: '学习路径索引', link: '/AI/SpringAI/' },
-            { text: '01 概述', link: '/AI/SpringAI/01-Spring-AI-概述' },
-            { text: '02 Chat Memory', link: '/AI/SpringAI/02-ChatMemory-聊天记忆' },
-            { text: '03 Tool Calling', link: '/AI/SpringAI/03-Tool-Calling-工具调用' },
-            { text: '04 MCP 协议', link: '/AI/SpringAI/04-MCP-协议' },
-            { text: '05 RAG', link: '/AI/SpringAI/05-RAG-检索增强生成' },
-          ]
-        },
-      ],
-      '/Java/': [
-        {
-          text: '核心',
-          collapsed: true,
-          items: [
-            { text: 'Java8 新特性', link: '/Java/核心/Java8新特性' },
-            { text: '集合框架', link: '/Java/核心/集合' },
-            { text: '并发编程', link: '/Java/核心/并发编程' },
-            { text: 'IO 与网络', link: '/Java/核心/IO与网络' },
-            { text: '反射与代理', link: '/Java/核心/反射' },
+            { text: 'Vue', link: '/软件开发/前端技术/VUE' },
+            { text: 'Vue3', link: '/软件开发/前端技术/Vue3' },
+            { text: 'H5/CSS', link: '/软件开发/前端技术/H5' },
+            { text: 'ES6', link: '/软件开发/前端技术/ES6' },
           ]
         },
         {
-          text: '框架',
-          collapsed: true,
+          text: '数据库',
           items: [
-            { text: 'Spring 核心', link: '/Java/框架/Spring' },
-            { text: 'SpringMVC', link: '/Java/框架/SpringMVC' },
-            { text: 'Spring Boot', link: '/Java/框架/SpringBoot' },
-            { text: 'MyBatis', link: '/Java/框架/MyBatis' },
-            { text: '分布式框架', link: '/Java/框架/分布式框架' },
-            { text: '消息队列', link: '/Java/框架/消息队列' },
-            { text: 'Quartz 调度', link: '/Java/框架/Quartz' },
-            { text: 'Shiro 安全', link: '/Java/框架/Shiro' },
-            { text: 'WebService', link: '/Java/框架/WebService' },
-            { text: 'Activiti 工作流', link: '/Java/框架/Activiti' },
+            { text: 'MySQL', link: '/软件开发/数据库/DB/MySQL' },
+            { text: 'Redis', link: '/软件开发/数据库/DB/Redis' },
+            { text: 'NoSQL', link: '/软件开发/数据库/DB/NoSlq' },
+            { text: 'Oracle', link: '/软件开发/数据库/DB/Oracle' },
+            { text: 'SQL基础', link: '/软件开发/数据库/DB/SQL' },
           ]
         },
-        { text: 'Maven', link: '/Java/构建/Maven' },
         {
-          text: '面试',
-          collapsed: true,
+          text: '后端技术',
           items: [
-            { text: 'JVM 与 GC', link: '/Java/面试/JVM与GC' },
-            { text: '多线程面试', link: '/Java/面试/多线程面试' },
-            { text: '引用类型', link: '/Java/面试/引用类型' },
-            { text: 'OutOfMemoryError', link: '/Java/面试/OutOfMemoryError' },
+            { text: 'APM监控', link: '/软件开发/后端技术/APM' },
+            { text: '限流', link: '/软件开发/后端技术/限流' },
           ]
         },
-      ],
-      '/数据库/': [
-        { text: 'MySQL', link: '/数据库/MySQL/高级/' },
-        { text: 'Redis', link: '/数据库/Redis/' },
-        { text: 'NoSQL', link: '/数据库/NoSlq/' },
-      ],
-      '/前端/': [
-        { text: 'Vue', link: '/前端/Vue/' },
-        { text: 'H5', link: '/前端/H5/' },
-      ],
-      '/架构设计/': [
-        { text: '设计模式', link: '/架构设计/设计模式/' },
-        { text: '分布式', link: '/架构设计/分布式/' },
-      ],
-      '/项目管理/': [
-        { text: '项目管理', link: '/项目管理/' },
-      ],
-      '/运维/': [
-        { text: 'Linux', collapsed: true, items: [
-          { text: '01 Linux 入门', link: '/运维/Linux/01-Linux-入门' },
-          { text: '02 目录与文件命令', link: '/运维/Linux/02-目录与文件命令' },
-          { text: '03 系统命令', link: '/运维/Linux/03-系统命令' },
-        ]},
-        { text: 'Shell 编程', collapsed: true, items: [
-          { text: '04 Shell 变量', link: '/运维/Shell/04-Shell-变量' },
-          { text: '05 Shell 运算符', link: '/运维/Shell/05-Shell-运算符' },
-        ]},
-        { text: 'ELK 日志平台', collapsed: true, items: [
-          { text: 'ELK 入门', link: '/运维/ELK/ELK-入门' },
-          { text: '日志收集工具对比', link: '/运维/ELK/日志收集工具对比' },
-        ]},
-        { text: '性能优化', link: '/运维/性能优化/性能优化理论' },
+        {
+          text: '架构设计',
+          items: [
+            { text: '架构思想', link: '/软件开发/架构设计/思想' },
+            { text: '数据结构', link: '/软件开发/架构设计/数据结构' },
+            { text: '架构师心得', link: '/软件开发/架构设计/架构师' },
+          ]
+        },
+        {
+          text: '运维技术',
+          items: [
+            { text: 'Linux', link: '/软件开发/运维技术/Linux' },
+            { text: 'ELK', link: '/软件开发/运维技术/ELK' },
+            { text: 'Jenkins', link: '/软件开发/运维技术/Jenkins' },
+          ]
+        },
+        {
+          text: '开发工具',
+          items: [
+            { text: 'Git', link: '/软件开发/开发工具/GIT' },
+            { text: 'VS Code', link: '/软件开发/开发工具/Visual Studio Code' },
+          ]
+        },
+        {
+          text: '其他技术',
+          items: [
+            { text: '网络通信', link: '/软件开发/网络通信' },
+            { text: '云服务网络', link: '/软件开发/云服务网络' },
+            { text: 'Redis缓存', link: '/软件开发/缓存/Redis缓存' },
+            { text: 'RabbitMQ消息队列', link: '/软件开发/消息队列/RabbitMQ消息队列' },
+          ]
+        }
       ],
       '/产品经理/': [
-        { text: '产品经理学习资源', link: '/产品经理/产品经理学习资源' },
+        {
+          text: '入门学习',
+          items: [
+            { text: '入门基础', link: '/产品经理/入门/入门基础' },
+            { text: '角色与职责', link: '/产品经理/入门/角色与职责' },
+            { text: '用户分析', link: '/产品经理/入门/用户分析' },
+            { text: '学习路径', link: '/产品经理/入门/学习路径-转型指南' },
+          ]
+        },
+        {
+          text: '学习资源',
+          items: [
+            { text: 'B站课程汇总', link: '/产品经理/学习资源/B站课程汇总' },
+            { text: '推荐书籍', link: '/产品经理/学习资源/推荐书籍' },
+          ]
+        }
       ],
+      '/项目管理/': [
+        {
+          text: 'PMP认证',
+          items: [
+            { text: 'PMP知识库', link: '/项目管理/PMP认证/PMP' },
+          ]
+        },
+        {
+          text: '敏捷管理',
+          items: [
+            { text: 'ACP敏捷管理', link: '/项目管理/敏捷管理/ACP敏捷管理' },
+          ]
+        }
+      ],
+      '/书籍/': [
+        {
+          text: '技术类',
+          items: [
+            { text: '分布式系统', link: '/书籍/技术类/分布式系统/分布式系统' },
+            { text: '架构简洁之道', link: '/书籍/技术类/架构设计/架构的简洁之道' },
+            { text: '设计模式', link: '/书籍/技术类/编程实践/设计模式' },
+            { text: '重构', link: '/书籍/技术类/编程实践/重构' },
+          ]
+        },
+        {
+          text: '哲学类',
+          items: [
+            { text: '道德经', link: '/书籍/哲学类/道德经/道德经' },
+          ]
+        },
+        {
+          text: '管理类',
+          items: [
+            { text: '项目管理', link: '/书籍/管理类/项目管理/项目管理' },
+          ]
+        },
+        {
+          text: '语言类',
+          items: [
+            { text: '英语', link: '/书籍/语言类/英语/英语' },
+          ]
+        },
+        {
+          text: '其他',
+          items: [
+            { text: '杂记', link: '/书籍/其他/杂记' },
+          ]
+        }
+      ],
+      '/字典/': [
+        {
+          text: '技术名词',
+          items: [
+            { text: 'Appium', link: '/字典/Appium' },
+            { text: 'TestNG', link: '/字典/TestNG' },
+            { text: 'Xunit', link: '/字典/Xunit' },
+            { text: '冒烟测试', link: '/字典/冒烟测试' },
+            { text: 'DRM', link: '/字典/DRM' },
+            { text: 'KMS', link: '/字典/KMS' },
+            { text: '待学习名词', link: '/字典/待学习名词' },
+          ]
+        }
+      ],
+      '/我的/': [
+        {
+          text: '个人档案',
+          items: [
+            { text: '我的记忆', link: '/我的/个人档案/自传/我的记忆' },
+            { text: '简历', link: '/我的/个人档案/2026 - 简历' },
+          ]
+        },
+        {
+          text: '职业发展',
+          items: [
+            { text: '职业规划', link: '/我的/职业发展/职业规划' },
+          ]
+        }
+      ],
+      '/3D建模/': [
+        {
+          text: '3D建模',
+          items: [
+            { text: 'Blender与Ae基础', link: '/3D建模/Blender与Ae基础' },
+            { text: '万圣节设计方案', link: '/3D建模/2025-万圣节/提示词' },
+          ]
+        }
+      ]
     },
     search: {
       provider: 'local',
       options: { detailedView: true }
     },
+    ignoreDeadLinks: true,
     editLink: {
       pattern: 'https://github.com/fomalhaut-m/wike/edit/main/docs/:path',
       text: '在 GitHub 上编辑此页'

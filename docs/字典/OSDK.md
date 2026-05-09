@@ -1,4 +1,4 @@
-﻿OSDK（Open Software Development Kit）即开源软件开发工具包。
+OSDK（Open Software Development Kit）即开源软件开发工具包。
 
 **一、特点**
 

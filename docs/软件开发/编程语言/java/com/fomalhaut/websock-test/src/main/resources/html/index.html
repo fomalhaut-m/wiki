@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+  <script src="../static/vue.js"></script>
+</head>
+
+<body>
+<div id="app">
+
+  <ul>
+    <li v-for="item in list">{{item}}</li>
+  </ul>
+  <input v-model="msg" type="text"/>
+  <button @click="sendMsg()">发送</button>
+</div>
+<script>
+  const app = new Vue({
+    el: '#app',// 用于挂在要管理的元素
+    data: {// 定义数据
+      msg: "我是列表",
+      list: ["打开sock连接"],
+      webSocket: null,
+      sockError: null,
+      sockOpen: null,
+      sockMsg: null
+    },
+    methods: {
+      initSockJs: function () {
+        let url = "ws://127.0.0.1:6680/api/sys/notify?token=796139ead8904245b1a589f6ab2e5fcc"
+        let url2 = "ws://127.0.0.1:6680/api/sockjs/sys/notify?token=796139ead8904245b1a589f6ab2e5fcc"
+        if ('WebSocket' in window || 'MozWebSocket' in window) {
+          this.webSocket = new WebSocket(url);
+        } else {
+          this.webSocket = new SockJS(url2);
+        }
+        this.list.push("sock初始化连接...");
+        this.sockError = this.onError(this.list);
+        this.sockOpen = this.onOpen(this.list);
+        this.sockMsg = this.onMessage(this.list);
+      },
+      onError: function (list) {
+        return this.webSocket.onerror = function (event) {
+          list.push("sock错误");
+          // console.log(event);
+        };
+      }
+      ,
+      onOpen: function (list) {
+        return this.webSocket.onopen = function (event) {
+          // list.push("sock打开");
+          // console.log(event);
+        };
+      },
+      onMessage: function (list) {
+        return this.webSocket.onmessage = function (event) {
+          list.push(new Date());
+          list.push(event.data);
+        };
+      },
+      sendMsg: function () {
+        this.list.push(new Date());
+        this.list.push(this.msg);
+        this.webSocket.send(this.msg);
+      }
+    },
+    mounted() {
+      this.initSockJs()
+    }
+  })
+
+
+</script>
+</body>
+</html>
