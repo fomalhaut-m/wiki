@@ -15,10 +15,10 @@
 | 数据库 | 说明 |
 |--------|------|
 | [Redis](Redis/) | KV数据库/缓存 |
-| [NoSQL](NoSlq/) | NoSQL数据库概述 |
+| [NoSQL](NoSQL/) | NoSQL数据库概述 |
 
 ### 其他
 
 | 工具 | 说明 |
 |------|------|
-| [docker-compose](docker-compose/) | Docker容器编排 |
+| [docker-compose](docker-compose.md) | Docker容器编排 |
