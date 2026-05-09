@@ -18,20 +18,15 @@ if [ -n "$STATUS" ]; then
     echo "$STATUS"
 fi
 
-# 获取最近一次提交后的变更（如果有）
-echo ""
-echo "🔧 Step 1/4: 检查提交记录..."
-LAST_COMMIT=$(git log --format="%s" -1)
-echo "最近提交: $LAST_COMMIT"
-
 # 如果有未提交的变更且有 API Key，调用 AI 生成日志
 if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     echo ""
-    echo "🔧 Step 2/4: 获取变更摘要..."
+    echo "🔧 Step 1/4: 获取变更摘要..."
     DIFF=$(git diff --stat)
+    echo "$DIFF"
     
     echo ""
-    echo "🔧 Step 3/4: 调用 Minimax AI 生成日志..."
+    echo "🔧 Step 2/4: 调用 Minimax AI 生成日志..."
     AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/text/completion \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer $API_KEY" \
@@ -46,19 +41,61 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
         LOG_ENTRY="文档内容更新"
     fi
     
-    echo "✅ 生成日志: $LOG_ENTRY"
+    echo "✅ AI 生成结果:"
+    echo "   $LOG_ENTRY"
     
     # 更新日志文件
     DATE=$(date +"%Y-%m-%d")
     LOG_FILE="docs/log/index.md"
     
-    if grep -q "## $DATE" "$LOG_FILE"; then
-        sed -i.bak "/^### 功能更新$/a\\\n- $LOG_ENTRY" "$LOG_FILE"
-        rm -f "$LOG_FILE.bak"
+    echo ""
+    echo "🔧 Step 3/4: 更新日志文件..."
+    
+    if grep -q "^## $DATE$" "$LOG_FILE"; then
+        # 在今天的功能更新后面追加
+        awk -v entry="$LOG_ENTRY" '
+        /^### 功能更新$/ {
+            print $0
+            print ""
+            print "- " entry
+            next
+        }
+        1
+        ' "$LOG_FILE" > "${LOG_FILE}.tmp"
+        mv "${LOG_FILE}.tmp" "$LOG_FILE"
+        
+        echo "✅ 已追加到今天的记录:"
+        echo "   - $LOG_ENTRY"
     else
-        sed -i.bak "/^---$/i\\\n## $DATE\\\n\\\n### 功能更新\\\n\\\n- $LOG_ENTRY" "$LOG_FILE"
-        rm -f "$LOG_FILE.bak"
+        # 在 "---" 之前插入新日期区块
+        awk -v date="$DATE" -v entry="$LOG_ENTRY" '
+        /^---$/ {
+            print ""
+            print "## " date
+            print ""
+            print "### 功能更新"
+            print ""
+            print "- " entry
+            print ""
+            print "---"
+            next
+        }
+        1
+        ' "$LOG_FILE" > "${LOG_FILE}.tmp"
+        mv "${LOG_FILE}.tmp" "$LOG_FILE"
+        
+        echo "✅ 已创建新日期区块:"
+        echo "   ## $DATE"
+        echo "   ### 功能更新"
+        echo "   - $LOG_ENTRY"
     fi
+    
+    # 显示更新后的日志内容
+    echo ""
+    echo "📋 更新后的日志内容:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    head -30 "$LOG_FILE"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
     # 提交日志
     git add "$LOG_FILE"
