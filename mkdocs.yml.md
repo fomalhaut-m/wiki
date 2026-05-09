@@ -142,7 +142,7 @@ plugins:
 
 # 额外配置
 extra:
-  generator: false  # 隐藏"Made with Material for MkDocs"
+  generator: true  # 隐藏"Made with Material for MkDocs"
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/seaflyNN

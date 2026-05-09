@@ -32,12 +32,3 @@ description: 个人知识沉淀与技术笔记
 | :book: **阅读笔记** | 架构设计、技术随笔 | [查看](/阅读/) |
 
 ---
-
-
-<div style="text-align: center; padding: 2rem; color: #6b7280;">
-
-**Powered by MkDocs + Material Theme**
-
-Made with :heart: by Vexrune
-
-</div>

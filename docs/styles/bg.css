@@ -1,0 +1,97 @@
+/* ========== 基础背景设置 ========== */
+body {
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 竖屏设备背景 */
+@media (orientation: portrait) {
+    body {
+        background-image: url('bg.png.png'); 
+    }
+}
+
+/* 横屏设备背景 */
+@media (orientation: landscape) {
+    body {
+        background-image: url('bg.png.png'); 
+    }
+}
+
+/* ========== 半透明效果组件 ========== */
+/* 标签栏 */
+.md-tabs {
+    background-color: rgba(63, 81, 181, 0.85) !important;
+    backdrop-filter: blur(5px);
+}
+
+/* 页脚 */
+.md-footer {
+    background-color: rgba(63, 81, 181, 0.85) !important;
+    backdrop-filter: blur(5px);
+}
+
+/* 对话框 */
+.md-dialog {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+}
+
+/* 内容区域 */
+.md-content__inner {
+    background-color: transparent !important;
+}
+
+/* 搜索框 */
+.md-search {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+/* 导航栏 */
+.md-header {
+    background-color: rgba(63, 81, 181, 0.85) !important;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+/* 主内容区 */
+.md-main {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* ========== 修复桌面端下左侧导航栏问题(莫名其妙就修复了，还挺好看的) ========== */
+
+.md-nav--primary .md-nav__title~.md-nav__list {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    box-shadow: none !important;
+}
+
+/* 右侧目录栏标题 - 提高优先级 */
+.md-sidebar--secondary .md-nav__title,
+.md-sidebar--secondary .md-nav__title::before {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    box-shadow: none !important;
+}
+
+/* 移除原始样式中的背景和阴影 */
+.md-nav--secondary .md-nav__title {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+
+/* 确保基础样式也被覆盖 */
+.md-nav__title {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    box-shadow: none !important;
+}
