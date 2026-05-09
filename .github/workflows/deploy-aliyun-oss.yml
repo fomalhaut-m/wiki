@@ -109,77 +109,77 @@ jobs:
           echo "📄 上传 HTML 文件..."
           find site/ -name "*.html" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "text/html; charset=utf-8" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:text/html; charset=utf-8" -f
           done
           
           # 上传 CSS 文件
           echo "📄 上传 CSS 文件..."
           find site/ -name "*.css" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "text/css; charset=utf-8" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:text/css; charset=utf-8" -f
           done
           
           # 上传 JS 文件
           echo "📄 上传 JS 文件..."
           find site/ -name "*.js" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "application/javascript; charset=utf-8" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:application/javascript; charset=utf-8" -f
           done
           
           # 上传 JSON 文件
           echo "📄 上传 JSON 文件..."
           find site/ -name "*.json" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "application/json" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:application/json" -f
           done
           
           # 上传 PNG 图片
           echo "📄 上传 PNG 图片..."
           find site/ -name "*.png" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "image/png" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:image/png" -f
           done
           
           # 上传 JPG 图片
           echo "📄 上传 JPG 图片..."
           find site/ -name "*.jpg" -o -name "*.jpeg" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "image/jpeg" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:image/jpeg" -f
           done
           
           # 上传 GIF 文件
           echo "📄 上传 GIF 文件..."
           find site/ -name "*.gif" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "image/gif" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:image/gif" -f
           done
           
           # 上传 SVG 文件
           echo "📄 上传 SVG 文件..."
           find site/ -name "*.svg" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "image/svg+xml" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:image/svg+xml" -f
           done
           
           # 上传 ICO 文件
           echo "📄 上传 ICO 文件..."
           find site/ -name "*.ico" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "image/x-icon" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:image/x-icon" -f
           done
           
           # 上传 XML 文件
           echo "📄 上传 XML 文件..."
           find site/ -name "*.xml" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "application/xml" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:application/xml" -f
           done
           
           # 上传 TXT 文件
           echo "📄 上传 TXT 文件..."
           find site/ -name "*.txt" -type f | while read file; do
             rel_path="${file#site/}"
-            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --content-type "text/plain; charset=utf-8" -f
+            ossutil cp "$file" "oss://vexrune-wike/$rel_path" --meta "Content-Type:text/plain; charset=utf-8" -f
           done
           
           echo ""
