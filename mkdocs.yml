@@ -1,7 +1,20 @@
 site_name: Luke's Wiki
 theme:
-  name: dracula
+  name: material
   language: zh
+  palette:
+    - scheme: slate
+      primary: deep-purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep-purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
 
 strict: false
 
