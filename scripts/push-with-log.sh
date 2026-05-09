@@ -15,7 +15,6 @@ fi
 API_KEY=${MINIMAX_API_KEY}
 
 # 检查是否有未提交的变更
-echo ""
 echo "🔧 检查工作目录..."
 STATUS=$(git status --porcelain)
 HAS_UNCOMMITTED=false
@@ -28,7 +27,6 @@ else
 fi
 
 # 检查是否有未推送的提交
-echo ""
 echo "🔧 检查未推送提交..."
 UNPUSHED=$(git log --oneline origin/main..HEAD 2>/dev/null)
 HAS_UNPUSHED=false
@@ -42,12 +40,10 @@ fi
 
 # 如果有未提交的变更且有 API Key
 if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
-    echo ""
     echo "🔧 Step 1/4: 获取变更摘要..."
     DIFF=$(git diff --stat)
     echo "$DIFF"
     
-    echo ""
     echo "🔧 Step 2/4: 调用 Minimax AI..."
     AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/text/completion \
       -H "Content-Type: application/json" \
@@ -99,7 +95,6 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     # 替换原文件
     mv "$TEMP_FILE" "$LOG_FILE"
     
-    echo ""
     echo "📋 更新后的日志:"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     cat "$LOG_FILE"
@@ -109,18 +104,15 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     git commit -m "chore: 更新日志"
     echo "✅ 日志已提交"
 elif [ "$HAS_UNCOMMITTED" = true ] && [ -z "$API_KEY" ]; then
-    echo ""
     echo "⚠️ 未设置 MINIMAX_API_KEY，跳过日志更新"
     echo "提示: export MINIMAX_API_KEY=your_key"
 fi
 
 # 执行 Push
-echo ""
 echo "🔧 执行推送..."
 git push
 echo "✅ 推送完成!"
 
-echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "   ✅ 操作完成!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
