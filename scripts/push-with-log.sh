@@ -11,42 +11,23 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
-# 检查是否在 Git 仓库中
-if ! git rev-parse --is-inside-work-tree &> /dev/null; then
-    echo "❌ 当前目录不是 Git 仓库"
-    exit 1
-fi
-
 # 从环境变量获取 API Key
 API_KEY=${MINIMAX_API_KEY}
 
-# 检查是否有未提交的工作目录变更
-echo ""
-echo "🔧 检查工作目录..."
+# 检查是否有未提交的变更
 STATUS=$(git status --porcelain)
 HAS_UNCOMMITTED=false
 if [ -n "$STATUS" ]; then
     HAS_UNCOMMITTED=true
+    echo ""
     echo "✅ 发现未提交的变更:"
     echo "$STATUS"
 else
+    echo ""
     echo "⚠️ 工作目录干净"
 fi
 
-# 检查是否有未推送的提交
-echo ""
-echo "🔧 检查未推送提交..."
-UNPUSHED=$(git log --oneline origin/main..HEAD 2>/dev/null)
-HAS_UNPUSHED=false
-if [ -n "$UNPUSHED" ]; then
-    HAS_UNPUSHED=true
-    echo "✅ 发现未推送的提交:"
-    echo "$UNPUSHED"
-else
-    echo "⚠️ 没有未推送的提交"
-fi
-
-# 如果有未提交的变更且有 API Key，调用 AI 生成日志
+# 如果有未提交的变更且有 API Key
 if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     echo ""
     echo "🔧 Step 1/4: 获取变更摘要..."
@@ -54,72 +35,57 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     echo "$DIFF"
     
     echo ""
-    echo "🔧 Step 2/4: 调用 Minimax AI 生成日志..."
+    echo "🔧 Step 2/4: 调用 Minimax AI..."
     AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/text/completion \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer $API_KEY" \
       -d '{
         "model": "abab5.5-chat",
-        "prompt": "请分析以下Git代码变更，生成一条简洁、清晰的更新日志条目（中文，50字以内）：\n\n'"$DIFF"'",
-        "max_tokens": 1000
+        "prompt": "请分析以下Git代码变更，生成一条简洁的更新描述（中文，30字以内）：\n\n'"$DIFF"'",
+        "max_tokens": 50
       }')
     
     LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="text":")[^"]+')
     if [ -z "$LOG_ENTRY" ] || [ "$LOG_ENTRY" = "null" ]; then
-        LOG_ENTRY="文档内容更新"
+        LOG_ENTRY="文档更新"
     fi
     
-    echo "✅ AI 生成结果:"
-    echo "   $LOG_ENTRY"
+    echo "✅ AI 生成: $LOG_ENTRY"
+    
+    # 获取当前时间
+    TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
+    NEW_ENTRY="$TIMESTAMP: $LOG_ENTRY"
     
     # 更新日志文件
-    DATE=$(date +"%Y-%m-%d")
     LOG_FILE="docs/log/index.md"
     
-    echo ""
-    echo "🔧 Step 3/4: 更新日志文件..."
+    # 提取现有日志条目
+    EXISTING_LOGS=$(awk '/^```log$/,/^```$/' "$LOG_FILE" | grep -v "^```")
     
-    if grep -q "^## $DATE$" "$LOG_FILE"; then
-        awk -v entry="$LOG_ENTRY" '
-        /^### 功能更新$/ {
-            print $0
-            print ""
-            print "- " entry
-            next
-        }
-        1
-        ' "$LOG_FILE" > "${LOG_FILE}.tmp"
-        mv "${LOG_FILE}.tmp" "$LOG_FILE"
-        
-        echo "✅ 已追加到今天的记录:"
-        echo "   - $LOG_ENTRY"
-    else
-        awk -v date="$DATE" -v entry="$LOG_ENTRY" '
-        /^---$/ {
-            print ""
-            print "## " date
-            print ""
-            print "### 功能更新"
-            print ""
-            print "- " entry
-            print ""
-            print "---"
-            next
-        }
-        1
-        ' "$LOG_FILE" > "${LOG_FILE}.tmp"
-        mv "${LOG_FILE}.tmp" "$LOG_FILE"
-        
-        echo "✅ 已创建新日期区块:"
-        echo "   ## $DATE"
-        echo "   ### 功能更新"
-        echo "   - $LOG_ENTRY"
-    fi
+    # 合并新条目和旧条目（只保留最近10条）
+    ALL_LOGS=$(echo -e "$NEW_ENTRY\n$EXISTING_LOGS" | head -10)
+    
+    # 重新生成日志文件
+    cat > "$LOG_FILE" << 'EOF'
+# 更新日志
+
+这里记录项目的主要更新和变更。
+
+```log
+EOF
+    echo "$ALL_LOGS" >> "$LOG_FILE"
+    cat >> "$LOG_FILE" << 'EOF'
+```
+
+---
+
+更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)
+EOF
     
     echo ""
-    echo "📋 更新后的日志内容:"
+    echo "📋 更新后的日志:"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    head -30 "$LOG_FILE"
+    cat "$LOG_FILE"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
     git add "$LOG_FILE"
