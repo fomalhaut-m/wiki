@@ -93,16 +93,6 @@ markdown_extensions:
   - pymdownx.mark          # 标记
   - pymdownx.smartsymbols  # 智能符号
   - pymdownx.snippets      # 代码片段
-  - pymdownx.superfences:  # 代码围栏
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.tabbed:       # 标签页
-      alternate_style: true
-  - pymdownx.tasklist:     # 任务列表
-      custom_checkbox: true
-  - pymdownx.tilde         # 删除线
 
 plugins:
   - search:
