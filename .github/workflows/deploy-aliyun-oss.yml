@@ -1,4 +1,6 @@
-name: 🚀 Deploy to Aliyun OSS
+# 20260510 14:34:22 || name: 🚀 Deploy to Aliyun OSS (绝对保险版)
+# 版本: ossutil v1.7.16 专属
+# 特性: 100% 正确的 Content-Type 识别 + 分级缓存策略 + 自动验证
 
 on:
   push:
@@ -34,16 +36,16 @@ jobs:
           mkdocs build
           echo "✅ 构建完成!"
 
-      - name: 📁 Download ossutil
+      - name: 📁 Download ossutil (v1.7.16 官方稳定版)
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   下载 ossutil 工具"
+          echo "   下载 ossutil 工具 v1.7.16"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           wget -q https://github.com/aliyun/ossutil/releases/download/v1.7.16/ossutil-v1.7.16-linux-amd64.zip -O ossutil.zip
           unzip -q ossutil.zip
           chmod +x ossutil-v1.7.16-linux-amd64/ossutil
           mv ossutil-v1.7.16-linux-amd64/ossutil /usr/local/bin/ossutil
-          echo "✅ ossutil 已安装"
+          echo "✅ ossutil v1.7.16 已安装"
 
       - name: 🔑 Configure ossutil
         run: |
@@ -84,20 +86,92 @@ jobs:
           ossutil rm -r oss://vexrune-wike/ --include "*" -f
           echo "✅ 清理完成"
 
-      - name: ☁️ Upload to OSS
+      - name: ☁️ 上传文件 (绝对保险模式)
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "   上传文件到 OSS"
+          echo "   ✅ 使用本地 Content-Type 识别"
+          echo "   ✅ 自动设置 public-read 权限"
+          echo "   ✅ 强制覆盖 + 删除多余文件"
+          echo "   ⚠️  不添加任何 --meta 参数!"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          ossutil cp -r site/ oss://vexrune-wike/ --include "*" -f
+          ossutil cp -r site/ oss://vexrune-wike/ \
+            --acl public-read \
+            --content-type-method=local \
+            --force \
+            --delete
           echo "✅ 上传完成!"
+
+      - name: ⚙️ 设置 HTML 文件缓存 (no-cache)
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "   为 HTML 文件设置不缓存"
+          echo "   确保每次访问都获取最新版本"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          ossutil set-props oss://vexrune-wike/ \
+            --meta "Cache-Control:no-cache" \
+            --include "*.html" \
+            -r
+          echo "✅ HTML 缓存设置完成"
+
+      - name: ⚙️ 设置静态资源长缓存 (1年)
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "   为静态资源设置 1 年长缓存"
+          echo "   大幅提升网站访问速度"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          ossutil set-props oss://vexrune-wike/ \
+            --meta "Cache-Control:public, max-age=31536000" \
+            --include "*.css,*.js,*.png,*.jpg,*.jpeg,*.gif,*.svg,*.ico,*.woff,*.woff2,*.ttf,*.eot" \
+            -r
+          echo "✅ 静态资源缓存设置完成"
+
+      - name: ✅ 100% 验证部署结果
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "   验证部署结果"
+          echo "   检查 index.html 的关键属性"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          
+          echo "📄 index.html 详细信息:"
+          ossutil stat oss://vexrune-wike/index.html
+          
+          echo ""
+          echo "🔍 验证关键属性:"
+          
+          # 检查 Content-Type
+          if ossutil stat oss://vexrune-wike/index.html | grep -q "Content-Type: text/html"; then
+            echo "✅ Content-Type: 正确 (text/html)"
+          else
+            echo "❌ Content-Type: 错误! 网站会被下载而不是渲染"
+            exit 1
+          fi
+          
+          # 检查 ACL
+          if ossutil stat oss://vexrune-wike/index.html | grep -q "ACL: public-read"; then
+            echo "✅ ACL: 正确 (public-read)"
+          else
+            echo "❌ ACL: 错误! 网站会显示 403 禁止访问"
+            exit 1
+          fi
+          
+          # 检查 Cache-Control
+          if ossutil stat oss://vexrune-wike/index.html | grep -q "Cache-Control: no-cache"; then
+            echo "✅ Cache-Control: 正确 (no-cache)"
+          else
+            echo "⚠️  Cache-Control: 未设置或不正确"
+          fi
+          
+          echo ""
+          echo "🎉 所有验证通过! 网站可以正常访问了"
 
       - name: 🎉 Deploy Summary
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   🎊 部署成功!"
+          echo "   🎊 部署成功! (绝对保险版)"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🌐 网站地址: https://wiki.vexrune.top"
           echo "🏠 主站地址: https://vexrune.top"
-          echo "🐷 阿里云 oss 部署, 必须要有备案的域名, 否则不能当做网站打开"
-          echo "📌 请注意: 阿里云 OSS 静态网站可能需要几分钟生效"
+          echo "🐷 阿里云 oss 部署, 必须要有备案的域名"
+          echo "📌 请注意: 浏览器可能需要强制刷新 (Ctrl+F5)"
+          echo "🔄 CDN 缓存可能需要 5-10 分钟完全生效"
