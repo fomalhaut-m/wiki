@@ -40,9 +40,14 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "   下载 ossutil 工具(国内镜像,极速下载)"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          wget -q https://gosspublic.alicdn.com/ossutil/1.7.20/ossutil64 -O /usr/local/bin/ossutil
-          chmod +x /usr/local/bin/ossutil
-          ossutil --version
+          # 方案1：使用官方一键安装脚本（推荐）
+          sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+          
+          # 方案2：手动下载（备用，若方案1失败）
+          # wget -q http://gosspublic.alicdn.com/ossutil/1.7.20/ossutil64 -O /usr/local/bin/ossutil
+          # chmod +x /usr/local/bin/ossutil
+          
+          ossutil --version  # 验证版本
           echo "✅ ossutil 安装完成"
 
       - name: 🔑 Configure ossutil
