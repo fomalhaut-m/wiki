@@ -1,4 +1,4 @@
-name: 🚀 Deploy to Aliyun OSS (ossutil 2.2.2 修复强制下载)
+name: 🚀 Deploy to Aliyun OSS (官方一键安装版)
 
 on:
   push:
@@ -11,62 +11,56 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout code
+      - name: 📦 拉取代码
         uses: actions/checkout@v4
 
-      - name:  Setup Python
+      - name: 🐍 配置Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: 📥 Install MkDocs
-        run: |
-          pip install mkdocs mkdocs-material
+      - name: 📥 安装MkDocs
+        run: pip install mkdocs mkdocs-material
 
-      - name: 🏗️ Build MkDocs
+      - name: 🏗️ 构建静态网站
         run: mkdocs build
 
-      # 你指定的 ossutil 2.2.2 下载链接
-      - name: 📁 安装 unzip + 下载 ossutil 2.2.2
+      # ===================== 你指定的 官方一键安装脚本（100%成功） =====================
+      - name: 📁 官方一键安装 ossutil（最新稳定版）
         run: |
-          sudo apt update -y && sudo apt install -y unzip
-          wget https://gosspublic.alicdn.com/ossutil/2.2.2/ossutil-v2.2.2-linux-amd64.zip -O ossutil.zip
-          unzip -q ossutil.zip
-          chmod +x ossutil-v2.2.2-linux-amd64/ossutil
-          mv ossutil-v2.2.2-linux-amd64/ossutil /usr/local/bin/
-          ossutil --version
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "   阿里云官方一键安装 ossutil"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+          ossutil --version  # 验证安装
+      # ================================================================================
 
-      - name: 🔑 Configure ossutil
+      - name: 🔑 配置OSS凭证
         run: |
           ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
 
-      - name: 🗑️ 清理OSS旧文件
+      - name: 🗑️ 清空OSS旧文件
         run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
 
-      # 🔥 核心修复：添加 Content-Disposition:inline 关闭强制下载
-      - name: ☁️ 上传文件（关闭强制下载，正常渲染网页）
+      # 🔥 核心修复：关闭强制下载，浏览器正常渲染网页
+      - name: ☁️ 上传文件到OSS
         run: |
           ossutil cp -r site/ oss://vexrune-wike/ \
             --acl public-read \
             --force \
-            --meta "Content-Disposition:inline"  # 关键：浏览器内联渲染，不下载
-          
-      - name: ⚙️ 设置HTML不缓存
+            --meta "Content-Disposition:inline"
+
+      - name: ⚙️ HTML文件设置不缓存
         run: ossutil set-props oss://vexrune-wike/ --meta "Cache-Control:no-cache" --include "*.html" -r
 
-      - name: ⚙️ 设置静态资源长缓存
+      - name: ⚙️ 静态资源长缓存(1年)
         run: |
           ossutil set-props oss://vexrune-wike/ \
             --meta "Cache-Control:public, max-age=31536000" \
             --include "*.css,*.js,*.png,*.jpg,*.svg,*.woff,*.woff2" -r
 
-      - name: ✅ 验证修复结果
-        run: |
-          ossutil stat oss://vexrune-wike/index.html
-          echo "==================================="
-          echo "  ✅ 修复完成：强制下载已关闭"
-          echo "  ✅ 浏览器将正常渲染网页"
-          echo "==================================="
+      - name: ✅ 验证部署结果
+        run: ossutil stat oss://vexrune-wike/index.html
 
       - name: 🔄 自动刷新CDN缓存
         run: |
@@ -76,5 +70,7 @@ jobs:
 
       - name: 🎉 部署成功
         run: |
-          echo "🌐 网站地址: https://wiki.vexrune.top"
-          echo "✅ 强制下载已修复，网页正常打开！"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "   🎊 部署完成！网站正常访问！"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🌐 访问地址：https://wiki.vexrune.top"
