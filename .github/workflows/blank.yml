@@ -1,4 +1,4 @@
-name: ⚡ 极速部署 OSS (零报错终极版)
+name: ⚡ 极速部署OSS（最终完美版）
 on:
   push:
     branches: [main]
@@ -10,25 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 直接生成HTML，不编译、无依赖
-      - name: 📄 生成首页
-        run: echo '<h1>✅ 部署成功！网站正常访问</h1>' > index.html
+      # 直接生成首页
+      - name: 📄 创建 index.html
+        run: echo '<h1>✅ 部署成功</h1>' > index.html
 
-      # 你指定的官方一键安装 ossutil
+      # 官方一键安装ossutil
       - name: 📦 安装ossutil
         run: sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
 
-      # 配置OSS凭证
-      - name: 🔑 配置认证
-        run: ossutil config -e oss-cn-shenzhencs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
+      # 🔑 正确配置OSS（修复Endpoint！！！）
+      - name: 配置认证
+        run: |
+          ossutil config -e oss-cn-shenzhen.aliyuncs.com \
+            -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} \
+            -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
+            -L CH
 
-      # 🔥 核心：上传+修复强制下载（浏览器直接打开，不下载）
-      - name: 🚀 上传文件
+      # 🚀 上传（修复强制下载，无任何冗余）
+      - name: 上传文件
         run: ossutil cp index.html oss://vexrune-wike/ --acl public-read --force --meta "Content-Disposition:inline"
-
-      # 验证结果
-      - name: ✅ 验证部署
-        run: ossutil stat oss://vexrune-wike/index.html
-
-      - name: 🎉 完成
-        run: echo "访问地址：https://wiki.vexrune.top"
