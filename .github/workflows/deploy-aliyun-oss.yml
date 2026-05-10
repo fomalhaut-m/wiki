@@ -1,118 +1,76 @@
-name: 🚀 Deploy to Aliyun OSS (最终完美版)
+name: 🚀 Deploy to Aliyun OSS (ossutil 2.0 官方版)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: 📦 Checkout code
         uses: actions/checkout@v4
 
-      - name:  Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: 📥 Install MkDocs
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   安装 MkDocs 和 Material 主题"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          pip install mkdocs mkdocs-material
+        run: pip install mkdocs mkdocs-material
 
       - name: 🏗️ Build MkDocs
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   构建静态站点"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          mkdocs build
-          echo "✅ 构建完成!"
+        run: mkdocs build
 
-      # 🔥 升级为 ossutil 1.7.18 (支持 --content-type-method=local 参数)
-      - name: 📁 Download ossutil (v1.7.18 官方版)
+      # 🔥 核心升级：安装 ossutil 2.0 官方版
+      - name: 📁 Download ossutil 2.0 (官方最新版)
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   下载 ossutil 工具 v1.7.18"
+          echo "   下载 ossutil 2.0 官方稳定版"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          wget -q https://github.com/aliyun/ossutil/releases/download/v1.7.18/ossutil-v1.7.18-linux-amd64.zip -O ossutil.zip
+          wget -q https://gosspublic.alicdn.com/ossutil/2.0.4/ossutil-v2.0.4-linux-amd64.zip -O ossutil.zip
           unzip -q ossutil.zip
-          chmod +x ossutil-v1.7.18-linux-amd64/ossutil
-          mv ossutil-v1.7.18-linux-amd64/ossutil /usr/local/bin/ossutil
-          echo "✅ ossutil v1.7.18 已安装"
+          chmod +x ossutil-v2.0.4-linux-amd64/ossutil
+          mv ossutil-v2.0.4-linux-amd64/ossutil /usr/local/bin/ossutil
+          ossutil --version  # 验证版本：2.0.4
+          echo "✅ ossutil 2.0 安装完成"
 
-      - name: 🔑 Configure ossutil
+      - name: 🔑 Configure ossutil 2.0
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   配置 OSS 凭证"
+          echo "   配置 OSS 凭证（2.0 简化版）"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
-          echo "✅ 凭证配置完成"
+          # 2.0 支持直接通过环境变量配置，更安全
+          export OSS_ACCESS_KEY_ID=${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          export OSS_ACCESS_KEY_SECRET=${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          export OSS_ENDPOINT=oss-cn-shenzhen.aliyuncs.com
+          # 验证配置
+          ossutil ls oss://vexrune-wike/ --limited-num 3
+          echo "✅ 凭证配置成功"
 
-      - name: 🔍 Verify OSS permissions
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   验证 OSS 访问权限"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📋 Bucket 信息:"
-          ossutil stat oss://vexrune-wike/
-          echo "📂 最近的文件 (前 5 个):"
-          ossutil ls oss://vexrune-wike/ --limited-num 5
-          echo "✅ 权限验证通过"
-
-      - name: 📊 Verify build output
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   构建产物统计"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          FILE_COUNT=$(find site/ -type f | wc -l)
-          TOTAL_SIZE=$(du -sh site/ | cut -f1)
-          echo "📁 文件数量: $FILE_COUNT"
-          echo "💾 总大小: $TOTAL_SIZE"
-          echo "📄 文件列表 (前 10 个):"
-          find site/ -type f | head -10
-
-      - name: 🗑️ Clean old files on OSS
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   清理 OSS 旧文件"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          ossutil rm -r oss://vexrune-wike/ --include "*" -f
-          echo "✅ 清理完成"
-
-      # ✅ 1.7.18 专属参数，完美支持 --content-type-method=local
-      - name: ☁️ 上传文件 (绝对保险模式)
+      - name: ☁️ 上传文件（2.0 官方标准命令）
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "   上传文件到 OSS"
-          echo "   ✅ 使用本地 Content-Type 识别"
-          echo "   ✅ 自动设置 public-read 权限"
-          echo "   ✅ 强制覆盖 + 删除多余文件"
+          echo "   ✅ 2.0 原生自动识别 Content-Type"
+          echo "   ✅ 强制覆盖+删除多余文件+公共读权限"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           ossutil cp -r site/ oss://vexrune-wike/ \
             --acl public-read \
-            --content-type-method=local \
             --force \
-            --delete
-          echo "✅ 上传完成!"
+            --delete \
+            --jobs 10  # 2.0 并行优化，提升上传速度
+          echo "✅ 上传完成！"
 
-      - name: ⚙️ 设置 HTML 文件缓存 (no-cache)
+      - name: ⚙️ 设置 HTML 缓存（no-cache）
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   为 HTML 文件设置不缓存"
+          echo "   为 HTML 文件设置不缓存策略"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           ossutil set-props oss://vexrune-wike/ \
             --meta "Cache-Control:no-cache" \
             --include "*.html" \
-            -r
+            -r \
+            --metadata-directive REPLACE  # 2.0 新增：强制替换元数据
           echo "✅ HTML 缓存设置完成"
 
-      - name: ⚙️ 设置静态资源长缓存 (1年)
+      - name: ⚙️ 设置静态资源长缓存（1年）
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "   为静态资源设置 1 年长缓存"
@@ -120,23 +78,23 @@ jobs:
           ossutil set-props oss://vexrune-wike/ \
             --meta "Cache-Control:public, max-age=31536000" \
             --include "*.css,*.js,*.png,*.jpg,*.jpeg,*.gif,*.svg,*.ico,*.woff,*.woff2" \
-            -r
+            -r \
+            --metadata-directive REPLACE
           echo "✅ 静态资源缓存设置完成"
 
-      - name: ✅ 100% 验证部署结果
+      - name: ✅ 2.0 官方验证方法
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   验证部署结果"
+          echo "   验证部署结果（2.0 增强版）"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           ossutil stat oss://vexrune-wike/index.html
           
-          # 自动校验关键属性
+          # 自动校验关键属性（2.0 输出更规范）
           ossutil stat oss://vexrune-wike/index.html | grep "Content-Type: text/html" && echo "✅ Content-Type 正确" || exit 1
           ossutil stat oss://vexrune-wike/index.html | grep "ACL: public-read" && echo "✅ 权限正确" || exit 1
           echo "🎉 部署验证全部通过！"
 
-      # 🔄 自动刷新阿里云 CDN 缓存
-      - name: 🔄 自动刷新阿里云 CDN 全站缓存
+      - name: 🔄 自动刷新阿里云 CDN 缓存
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "   安装阿里云 CLI 并刷新 CDN"
@@ -149,8 +107,7 @@ jobs:
       - name: 🎉 Deploy Summary
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "   🎊 部署成功!"
+          echo "   🎊 部署成功! (ossutil 2.0)"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "🌐 网站地址: https://wiki.vexrune.top"
-          echo "🏠 主站地址: https://vexrune.top"
-          echo "✅ ossutil v1.7.18 | 参数正常 | CDN已刷新"
+          echo "✅ 核心特性: 自动识别Content-Type | 分级缓存 | CDN自动刷新"
