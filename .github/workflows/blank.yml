@@ -1,0 +1,44 @@
+name: ⚡极速部署 OSS (极简无报错版)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 拉取代码
+        uses: actions/checkout@v4
+
+      # 🔥 直接生成 index.html，不编译、不依赖任何工具
+      - name: 📄 生成首页文件
+        run: echo "<h1>部署成功！网站正常访问</h1>" > index.html
+
+      # ✅ 你指定的 阿里云官方一键安装 ossutil
+      - name: 📁 安装 ossutil
+        run: sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+
+      # 🔑 配置凭证
+      - name: 配置OSS
+        run: ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} -L CH
+
+      # ☁️ 直接上传 + 修复强制下载（浏览器正常渲染）
+      - name: 🚀 上传文件
+        run: ossutil cp index.html oss://vexrune-wike/ --acl public-read --force --meta "Content-Disposition:inline"
+
+      # ✅ 验证上传
+      - name: 验证结果
+        run: ossutil stat oss://vexrune-wike/index.html
+
+      # 🔄 刷新CDN
+      - name: 刷新CDN缓存
+        run: |
+          pip install aliyun-python-sdk-core aliyun-python-sdk-cdn
+          aliyuncli configure set access-key-id ${{ secrets.ALIYUN_ACCESS_KEY_ID }} access-key-secret ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} region-id cn-shenzhen
+          aliyuncli cdn RefreshObjectCaches --ObjectPath https://wiki.vexrune.top/ --ObjectType Directory
+
+      - name: ✅ 完成
+        run: echo "部署成功！https://wiki.vexrune.top"
