@@ -20,3 +20,6 @@
 
 本系列以 Vexfy 项目的真实代码为教材，结合 Java 概念对比学习 Dart。
 地址：[Vexfy 项目](https://github.com/fomalhaut-m/vexfy.git)
+
+本系列的 example 代码在 https://github.com/fomalhaut-m/flutter-example.git
+地址：[Flutter 示例项目](https://github.com/fomalhaut-m/flutter-example.git)
