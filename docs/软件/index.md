@@ -12,6 +12,7 @@
 | [C#](C%23/) | .NET生态、桌面/Web开发 |
 | [C](C/) | 系统编程、嵌入式 |
 | [Python](python/) | 脚本、AI、数据分析 |
+| [Dart](dart/) | 移动开发、Flutter |
 
 ### 前端技术
 
