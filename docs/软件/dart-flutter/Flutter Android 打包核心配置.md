@@ -14,9 +14,7 @@ flutter build apk --release
      ↓
 调用 gradlew
      ↓
-gradlew 读取 gradle-wrapper.properties
-     ↓
-下载对应版本 Gradle 到 ~/.gradle/wrapper/dists/
+下载对应版本 Gradle 
      ↓
 Gradle 执行 build.gradle
      ↓
@@ -30,7 +28,6 @@ Gradle 执行 build.gradle
 | `android/build.gradle` | 项目构建配置 | 不要手动改版本 |
 | `android/app/build.gradle` | App 构建配置 | 主战场 |
 | `android/gradle.properties` | Gradle 全局参数 | JVM 内存/编码 |
-| `android/gradle/wrapper/gradle-wrapper.properties` | 指定 Gradle 版本 | **不许手动改** |
 
 ### 3. Flutter Gradle 与系统 Gradle 的关系
 
