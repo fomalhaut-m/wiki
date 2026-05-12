@@ -1,4 +1,4 @@
-name: ⚡ 极速部署OSS（最终完美版）
+name: Deploy to OSS
 on:
   push:
     branches: [main]
@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 创建测试文件
+      - name: Create test files
         run: |
           cat > index.html << 'EOF'
           <!DOCTYPE html>
@@ -28,7 +28,7 @@ jobs:
           </html>
           EOF
 
-                    cat > style.css << 'EOF'
+          cat > style.css << 'EOF'
           body {
               font-family: Arial, sans-serif;
               max-width: 800px;
@@ -49,28 +49,35 @@ jobs:
 
                     cat > app.js << 'EOF'
           document.addEventListener('DOMContentLoaded', function() {
-              document.getElementById('js-test').textContent = 'JavaScript 加载成功！';
+              document.getElementById('js-test').textContent = 'JavaScript loaded!';
           });
           EOF
 
-      - name: 📦 安装ossutil
+      - name: Install ossutil
         run: sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
 
-      - name: 配置认证
+      - name: Configure
         run: |
           ossutil config -e oss-cn-shenzhen.aliyuncs.com \
             -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} \
             -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
             -L CH
 
-      - name: 上传所有文件
-        run: ossutil cp -r . oss://vexrune-wike/ --acl public-read --force
+      - name: Upload test files
+        run: |
+          ossutil cp index.html oss://vexrune-wike/index.html --acl public-read --force
+          ossutil cp style.css oss://vexrune-wike/style.css --acl public-read --force
+          ossutil cp app.js oss://vexrune-wike/app.js --acl public-read --force
 
+      - name: Check ossutil help
+        run: ossutil help | head -100
+        
       - name: 设置HTML Content-Type
         run: ossutil set-properties oss://vexrune-wike/ --include "*.html" --meta "Content-Type:text/html; charset=utf-8" -r
 
-      - name: 设置CSS Content-Type
-        run: ossutil set-properties oss://vexrune-wike/ --include "*.css" --meta "Content-Type:text/css; charset=utf-8" -r
 
-      - name: 设置JS Content-Type
+      - name: Set CSS Content-Type
+        run: ossutil help | grep -i set
+
+      - name: Set JS Content-Type
         run: ossutil set-properties oss://vexrune-wike/ --include "*.js" --meta "Content-Type:application/javascript; charset=utf-8" -r
