@@ -9,8 +9,6 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
-API_KEY=${MINIMAX_API_KEY}
-
 echo "🔍 检查未推送提交..."
 UNPUSHED=$(git log --oneline origin/main..HEAD 2>/dev/null || git log --oneline origin/master..HEAD 2>/dev/null)
 
@@ -22,73 +20,7 @@ fi
 echo "✅ 发现未推送的提交："
 echo "$UNPUSHED" | sed 's/^/   /'
 
-call_minimax_chat() {
-    local USER_PROMPT="$1"
-    local DEFAULT_OUTPUT="$2"
 
-    if [ -z "$API_KEY" ]; then
-        echo "$DEFAULT_OUTPUT"
-        return
-    fi
-
-    local PROMPT_FILE="./scripts/changelog-prompt.md"
-    if [ ! -f "$PROMPT_FILE" ]; then
-        echo "$DEFAULT_OUTPUT"
-        return
-    fi
-
-    local SYSTEM_PROMPT=$(cat "$PROMPT_FILE")
-
-    if ! command -v jq &> /dev/null; then
-        echo "$DEFAULT_OUTPUT"
-        return
-    fi
-
-    local SYSTEM_JSON=$(printf '%s' "$SYSTEM_PROMPT" | jq -Rs '.')
-    local USER_JSON=$(printf '%s' "$USER_PROMPT" | jq -Rs '.')
-
-    local REQUEST_BODY=$(jq -n \
-        --arg model "MiniMax-M2"  \
-        --argjson system_content "$SYSTEM_JSON" \
-        --argjson user_content "$USER_JSON" \
-        '{
-            model: $model,
-            messages: [
-                {role: "system", content: $system_content},
-                {role: "user", content: $user_content}
-            ],
-            max_tokens: 1000,
-            imagine: false,
-            temperature: 0.1
-        }')
-
-    local AI_RESULT=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
-        -X POST "https://api.minimax.chat/v1/chat/completions" \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer $API_KEY" \
-        -d "$REQUEST_BODY")
-
-    echo "AI_RESULT: $AI_RESULT"
-
-    local HTTP_STATUS=$(echo "$AI_RESULT" | grep -oP 'HTTP_STATUS:\K\d+$')
-    local RESPONSE_BODY=$(echo "$AI_RESULT" | sed '$d')
-
-
-
-    if [ "$HTTP_STATUS" != "200" ]; then
-        echo "$DEFAULT_OUTPUT"
-        return
-    fi
-
-    local LOG_CONTENT=$(echo "$RESPONSE_BODY" | jq -r '.choices[0].message.content // empty')
-
-    if [ -z "$LOG_CONTENT" ] || [ "$LOG_CONTENT" = "null" ]; then
-        echo "$DEFAULT_OUTPUT"
-        return
-    fi
-
-    echo "$LOG_CONTENT"
-}
 
 echo -e "\n🤖 生成更新日志..."
 
@@ -117,12 +49,21 @@ fi
 
 DEFAULT_LOG_CONTENT=$(printf "%s:\n- %s\n%s" "$TODAY" "$DEFAULT_ENTRY" "$EXISTING_LOGS" | head -20)
 
-NEW_LOG_CONTENT=$(call_minimax_chat "今天日期：$TODAY
+COMMIT_INFO="今天日期：$TODAY
 现有日志内容：
 $EXISTING_LOGS
 本次Git变更内容：
 $DIFF_CONTENT
-请生成完整的新日志内容，合并当天的所有变更，保持固定格式。" "$DEFAULT_LOG_CONTENT")
+请生成完整的新日志内容，合并当天的所有变更，保持固定格式。"
+
+if NEW_LOG_CONTENT=$(bash "./scripts/call-minimax-api.sh" "$COMMIT_INFO" 2>/dev/null); then
+    if [ -z "$NEW_LOG_CONTENT" ]; then
+        NEW_LOG_CONTENT="$DEFAULT_LOG_CONTENT"
+    fi
+else
+    echo "⚠️  API调用失败，使用默认日志内容"
+    NEW_LOG_CONTENT="$DEFAULT_LOG_CONTENT"
+fi
 
 if echo "$NEW_LOG_CONTENT" | grep -q "^\`\`\`log"; then
     NEW_LOG_CONTENT=$(echo "$NEW_LOG_CONTENT" | sed -n '/^```log$/,/^```$/p' | sed '1d;$d')
