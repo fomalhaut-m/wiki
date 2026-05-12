@@ -45,11 +45,20 @@ jobs:
       - name: ☁️ 上传文件
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read
-      # 🔥 设置文件类型
-      - name: 设置文件类型
+      - name: 上传 HTML（设置正确网页类型）
         run: |
-          ossutil set-meta oss://vexrune-wike/ "Content-Type:text/html; charset=utf-8" --include "*.html" -r -f
-          ossutil set-meta oss://vexrune-wike/ "Content-Type:text/css; charset=utf-8" --include "*.css" -r -f
-          ossutil set-meta oss://vexrune-wike/ "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r -f
+          ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:text/html; charset=utf-8" --include "*.html"
+
+      - name: 上传 CSS（样式）
+        run: |
+          ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:text/css" --include "*.css"
+
+      - name: 上传 JS（脚本）
+        run: |
+          ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:application/javascript" --include "*.js"
+
+      - name: 上传图片、字体等其他文件
+        run: |
+          ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --exclude "*.html" --exclude "*.css" --exclude "*.js"
       - name: 🎉 部署成功
         run: echo "✅ 网站正常访问：https://wiki.vexrune.top"
