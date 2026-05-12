@@ -48,18 +48,8 @@ jobs:
       # 🔥 设置文件类型
       - name: 设置文件类型
         run: |
-          find site/ -type f -name "*.html" | while read file; do
-            target="${file#site/}"
-            ossutil set-meta oss://vexrune-wike/"$target" "Content-Type:text/html; charset=utf-8" -f
-          done
-          find site/ -type f -name "*.css" | while read file; do
-            target="${file#site/}"
-            ossutil set-meta oss://vexrune-wike/"$target" "Content-Type:text/css; charset=utf-8" -f
-          done
-          find site/ -type f -name "*.js" | while read file; do
-            target="${file#site/}"
-            ossutil set-meta oss://vexrune-wike/"$target" "Content-Type:application/javascript; charset=utf-8" -f
-          done
-
+          ossutil set-meta oss://vexrune-wike/ "Content-Type:text/html; charset=utf-8" --include "*.html" -r -f
+          ossutil set-meta oss://vexrune-wike/ "Content-Type:text/css; charset=utf-8" --include "*.css" -r -f
+          ossutil set-meta oss://vexrune-wike/ "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r -f
       - name: 🎉 部署成功
         run: echo "✅ 网站正常访问：https://wiki.vexrune.top"
