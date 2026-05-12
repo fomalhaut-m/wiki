@@ -2,6 +2,7 @@
 import subprocess
 import sys
 import os
+import datetime
 
 def run_cmd(cmd, capture=True):
     if capture:
@@ -11,29 +12,75 @@ def run_cmd(cmd, capture=True):
         subprocess.run(cmd, shell=True)
         return ""
 
-def main():
-    print("===== 生成 Git Commit 消息 =====")
+def banner(title, emoji="📝"):
+    width = 52
+    print("")
+    print("┌" + "─" * width + "┐")
+    print("│" + f" {emoji} {title}".center(width) + "│")
+    print("└" + "─" * width + "┘")
 
+def section(title, emoji="▶"):
+    print("")
+    print(f"  {emoji} {title}")
+    print("  " + "─" * 48)
+
+def log_success(msg):
+    print(f"     ✅ {msg}")
+
+def log_error(msg):
+    print(f"     ❌ {msg}")
+
+def log_info(msg):
+    print(f"     🔄 {msg}")
+
+def log_warn(msg):
+    print(f"     ⚠️  {msg}")
+
+def log_step(msg):
+    print(f"     📌 {msg}")
+
+def kv(key, value):
+    print(f"     {key:<16}: {value}")
+
+def code_block(content, max_lines=8):
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
+        if i >= max_lines:
+            print(f"     │ ... (还有 {len(lines) - max_lines} 行)")
+            break
+        print(f"     │ {line[:76]}")
+
+def main():
+    banner("Git Commit 消息生成工具", "📝")
+
+    section("环境检查", "🔍")
+    log_step("检查 git 环境...")
     result = run_cmd("git --version")
     if not result:
-        print("❌ Git命令不可用")
+        log_error("Git 命令不可用")
         sys.exit(1)
+    kv("Git 版本", result)
 
+    log_step("获取 git 变更...")
     run_cmd("git config core.quotepath off")
 
     changes = run_cmd("git diff --no-ext-diff --unified=1 | head -50")
     if not changes:
         changes = run_cmd("git status --short")
+        log_info("无 diff，使用 git status")
 
-    print("变更内容：")
-    print(changes)
+    kv("变更长度", f"{len(changes)} 字符")
+    kv("变更行数", f"{len(changes.split(chr(10)))} 行")
+
+    section("变更预览", "📄")
+    code_block(changes, max_lines=10)
 
     if not changes:
-        print("无变更，退出")
+        log_warn("无变更，退出")
+        print("")
         sys.exit(0)
 
-    print("\n🤖 调用 AI 生成 commit...")
-
+    section("AI 请求参数", "🤖")
     user_prompt = f"""请根据以下代码变更生成一个简洁的 Git commit 消息。
 
 变更内容：
@@ -66,25 +113,48 @@ def main():
 - 简短明确
 - 只输出 commit 消息，不要引号或任何额外内容"""
 
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    kv("User Prompt", f"{len(user_prompt)} 字符")
+    kv("System Prompt", f"{len(system_prompt)} 字符")
 
+    section("AI 调用", "🚀")
+    log_step("开始调用 MiniMax API...")
+    start_time = datetime.datetime.now()
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, script_dir)
     from call_minimax_api import call_api
-    commit_msg = call_api(user_prompt, system_prompt)
+
+    try:
+        commit_msg = call_api(user_prompt, system_prompt)
+        end_time = datetime.datetime.now()
+        duration = (end_time - start_time).total_seconds()
+        log_success(f"AI 调用成功")
+        kv("耗时", f"{duration:.2f} 秒")
+        kv("返回长度", f"{len(commit_msg)} 字符")
+    except Exception as e:
+        log_error(f"AI 调用失败: {e}")
+        commit_msg = None
 
     if not commit_msg or len(commit_msg) < 5:
-        print("⚠️  AI返回无效，使用默认消息")
+        log_warn("AI 返回无效，使用默认消息")
         commit_msg = "docs: 更新项目文档"
 
-    print(f"\n✅ 最终 commit：{commit_msg}")
+    section("生成结果", "✅")
+    kv("Commit 消息", commit_msg)
 
-    print("\n📝 执行 git add .")
+    section("执行提交", "📦")
+    log_step("执行 git add .")
     run_cmd("git add .")
 
-    print("📝 执行 git commit")
-    run_cmd(f'git commit -m "{commit_msg}"')
+    log_step("执行 git commit")
+    result = run_cmd(f'git commit -m "{commit_msg}"')
+    if result:
+        kv("提交结果", result)
+    else:
+        log_success("提交成功")
 
-    print("===== 提交完成 =====")
+    banner("操作完成", "✅")
+    print("")
 
 if __name__ == "__main__":
     main()
