@@ -41,23 +41,19 @@ jobs:
       - name: 🗑️ 清空OSS旧文件
         run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
 
-      # ☁️ 上传文件
-      - name: ☁️ 上传文件
-        run: |
-          ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read
-      - name: 上传 HTML（设置正确网页类型）
+      - name: ☁️ 上传 HTML（设置正确网页类型）
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:text/html; charset=utf-8" --include "*.html"
 
-      - name: 上传 CSS（样式）
+      - name: ☁️ 上传 CSS（样式）
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:text/css" --include "*.css"
 
-      - name: 上传 JS（脚本）
+      - name: ☁️ 上传 JS（脚本）
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --meta "Content-Type:application/javascript" --include "*.js"
 
-      - name: 上传图片、字体等其他文件
+      - name: ☁️ 上传图片、字体等其他文件
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read --exclude "*.html" --exclude "*.css" --exclude "*.js"
       - name: 🎉 部署成功
