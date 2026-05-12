@@ -1,22 +1,33 @@
-# Dart 语言
+# Dart/Flutter 学习教程
 
-> 基于 Vexfy 项目实战学习 Dart 语言，适合有 Java 基础的同学速通
+> 基于 Vexfy 项目实战学习 Dart/Flutter 开发，适合有 Java 基础的同学速通，从入门到实战一站式学习
 
 ## 目录结构
 
-- [01-开发环境安装](./01-开发环境安装.md) — Flutter/Android SDK 安装
-- [02-Dart语法速通](./02-Dart语法速通.md) — Java 程序员 30 分钟上手
-- [03-Flutter项目结构](./03-Flutter项目结构.md) — 跑起第一个页面
-- [04-Widget基础](./04-Widget基础.md) — 声明式 UI + 生命周期
-- [05-构建打包指南](./05-构建打包指南.md) — APK / Linux / Windows / iOS / macOS
-- [06-状态管理GetX](./06-状态管理GetX.md) — GetxController / .obs / Bindings
-- [07-Vexfy实战](./07-Vexfy实战.md) — PlayerService / LocalMusicService / PlayerPage 源码解析
-- [08-网络请求Dio](./08-网络请求Dio.md) — GET/POST / 拦截器 / OSS 上传下载
-- [09-数据库sqflite](./09-数据库sqflite.md) — SQLite / CRUD / 歌曲存储
-- [10-后台播放audio_service](./10-后台播放audio_service.md) — Android Service / 通知栏 / 锁屏控制
-- [11-打包发布](./11-打包发布.md) — APK 签名 / 应用市场 / CI/CD
-- [Flutter Android 打包核心配置](./Flutter Android 打包核心配置.md) — 通用打包配置 + 常见坑
-- [GetX 官方文档](./getx.md) — GetX 官方文档
+### 01-基础入门
+- [01-开发环境安装](./01-基础入门/01-开发环境安装.md) — Flutter/Android SDK 安装配置
+- [02-Dart语法速通](./01-基础入门/02-Dart语法速通.md) — Java 程序员 30 分钟快速上手Dart
+- [03-Flutter项目结构](./01-基础入门/03-Flutter项目结构.md) — 跑起第一个Flutter页面
+- [04-Widget基础](./01-基础入门/04-Widget基础.md) — 声明式UI + 生命周期详解
+
+### 02-GetX系列教程（全部GetX相关文档集中在这里）
+- [01-GetX状态管理进阶教程](./02-GetX系列教程/01-GetX状态管理进阶教程.md) — GetxController / .obs / Bindings 官方用法
+- [02-GetX路由学习（初学通俗版）](./02-GetX系列教程/02-GetX路由学习（初学通俗版）.md) — 不用context的超简单路由用法
+- [03-GetX状态管理学习（初学通俗版）](./02-GetX系列教程/03-GetX状态管理学习（初学通俗版）.md) — 不用setState的响应式状态管理
+- [04-GetX依赖管理学习（初学通俗版）](./02-GetX系列教程/04-GetX依赖管理学习（初学通俗版）.md) — 不用手动new实例的全局依赖管理
+- [05-GetX官方完整参考文档](./02-GetX系列教程/05-GetX官方完整参考文档.md) — GetX 官方完整文档参考
+
+### 03-功能实战指南
+- [01-构建打包基础指南](./03-功能实战指南/01-构建打包基础指南.md) — APK / Linux / Windows / iOS / macOS 多平台打包
+- [02-Vexfy项目实战教程](./03-功能实战指南/02-Vexfy项目实战教程.md) — PlayerService / LocalMusicService / PlayerPage 源码解析
+- [03-网络请求Dio使用教程](./03-功能实战指南/03-网络请求Dio使用教程.md) — GET/POST / 拦截器 / OSS 上传下载
+- [04-数据库sqflite使用教程](./03-功能实战指南/04-数据库sqflite使用教程.md) — SQLite / CRUD / 本地歌曲存储实现
+- [05-后台播放audio_service实现](./03-功能实战指南/05-后台播放audio_service实现.md) — Android Service / 通知栏 / 锁屏播放控制
+- [06-APK打包发布上线教程](./03-功能实战指南/06-APK打包发布上线教程.md) — APK 签名 / 应用市场上架 / CI/CD 自动化部署
+
+### 04-经验扩展总结
+- [01-Flutter Android 打包核心配置](./04-经验扩展总结/01-Flutter Android 打包核心配置.md) — 通用打包配置 + 常见坑点总结
+- [02-Flutter 项目开发经验积累](./04-经验扩展总结/02-Flutter 项目开发经验积累.md) — 实战踩坑总结 + 最佳实践分享
 
 ## 学习说明
 
