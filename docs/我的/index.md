@@ -1,7 +1,7 @@
 ---
 title: 个人介绍
 description: 关于知识库作者
-weight: 1
+weight: 999
 ---
 
 # 关于作者

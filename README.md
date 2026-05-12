@@ -69,7 +69,7 @@ wike/                              # 项目根目录
 
 ### 前置条件
 
-- Python 3.8+
+- Python 3.12.9
 - Git
 
 ### 安装步骤
@@ -89,10 +89,10 @@ python3 -m venv venv
 source venv/bin/activate
 
 # 5. 安装 mkdocs 依赖
-pip install mkdocs mkdocs-material mkdocs-nav-weight
+python -m pip install -r requirements.txt
 
 # 6. 启动开发服务器
-mkdocs serve
+python -m mkdocs serve
 ```
 
 > **提示**: 如果遇到 `externally-managed-environment` 错误，说明系统启用了 Python 环境保护机制，
@@ -102,7 +102,7 @@ mkdocs serve
 
 | 命令 | 说明 |
 |------|------|
-| `mkdocs serve` | 启动本地开发服务器 (http://localhost:8000) |
+| `python -m mkdocs serve` | 启动本地开发服务器 (http://localhost:8000) |
 | `mkdocs build` | 构建静态站点到 site/ 目录 |
 | `mkdocs gh-deploy` | 部署到 GitHub Pages |
 | `bash scripts/push-with-log.sh` | 推送代码并自动更新日志 |

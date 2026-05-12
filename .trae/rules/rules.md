@@ -144,6 +144,9 @@ project-root/
   - 错误：`DeployOSS.sh`、`backup_docs.ps1`
 
 ## 六、核心命令规范
+### 环境要求
+- Python 3.12.9
+
 ### 1. 装环境（第一次 / 重装后用）
 ```bash
 python -m pip install -r requirements.txt
