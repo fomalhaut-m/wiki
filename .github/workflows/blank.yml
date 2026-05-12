@@ -65,6 +65,7 @@ jobs:
 
       - name: Upload files
         run: |
+          ossutil help
           ossutil cp index.html oss://vexrune-wike/index.html --acl public-read --force
           ossutil cp style.css oss://vexrune-wike/style.css --acl public-read --force
           ossutil cp app.js oss://vexrune-wike/app.js --acl public-read --force
@@ -74,3 +75,6 @@ jobs:
           ossutil set-meta oss://vexrune-wike/index.html "Content-Type:text/html; charset=utf-8"
           ossutil set-meta oss://vexrune-wike/style.css "Content-Type:text/css; charset=utf-8"
           ossutil set-meta oss://vexrune-wike/app.js "Content-Type:application/javascript; charset=utf-8"
+          ossutil set-meta oss://vexrune/ "Content-Type:text/html; charset=utf-8" --include "*.html" -r
+          ossutil set-meta oss://vexrune/ "Content-Type:text/css; charset=utf-8" --include "*.css" -r
+          ossutil set-meta oss://vexrune/ "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r
