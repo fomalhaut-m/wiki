@@ -1,10 +1,10 @@
 name: 🚀 Deploy to Aliyun OSS 
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
