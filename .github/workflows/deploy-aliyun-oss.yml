@@ -33,7 +33,10 @@ jobs:
 
       - name: 🔑 配置OSS凭证
         run: |
-          ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIY_ACCESS_KEY_ID }} -k ${{ secrets.ALIY_ACCESS_KEY_SECRET }} -L CH
+          ossutil config -e oss-cn-shenzhen.aliyuncs.com \
+            -i ${{ secrets.ALIYUN_ACCESS_KEY_ID }} \
+            -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
+            -L CH
 
       - name: 🗑️ 清空OSS旧文件
         run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
