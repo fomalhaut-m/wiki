@@ -82,6 +82,25 @@ project-root/
 ### 3. 目录索引文档
 - 每个目录必须有入口文档：`index.md`（大写）
 - 作用：说明该目录用途、目录结构、使用注意事项
+- 开头规则: 
+  ```
+  ---
+  title: Wiki
+  description: 个人知识沉淀与技术笔记
+  weight: 10
+  ---
+  ```
+  title: 目录索引
+  weight: 60 (最好是10的倍数)
+  description: 文档描述
+
+- 小说目录 index.md 规则示例:
+  ```
+  ---
+  title: 阅读
+  weight: 75
+  ---
+  ```
 
 ## 四、文件名命名规范
 ### 1. 通用原则
@@ -124,7 +143,18 @@ project-root/
   - 正确：`deploy-oss.sh`、`backup-docs.ps1`
   - 错误：`DeployOSS.sh`、`backup_docs.ps1`
 
-## 五、强制禁止事项
+## 六、核心命令规范
+### 1. 装环境（第一次 / 重装后用）
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 2. 启动文档（每次都用）
+```bash
+python -m mkdocs serve
+```
+
+## 七、强制禁止事项
 - 禁止创建超过3级的子目录
 - 禁止文件名/目录名中英混合、大小写混乱
 - 禁止使用无意义命名：`新建文件夹`、`未命名`、`文档1`等
