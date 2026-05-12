@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 📄 创建测试文件
+      - name: 创建测试文件
         run: |
           cat > index.html << 'EOF'
 <!DOCTYPE html>
