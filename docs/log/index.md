@@ -3,6 +3,11 @@
 这里记录项目的主要更新和变更。
 
 ```log
+AI_RESULT: {"type":"error","error":{"type":"server_error","message":"your current token plan not support model, abab5.5-chat (2061)","http_code":"500"},"request_id":"06520e0b763821f7fb2847474a2091ea"}
+
+HTTP_STATUS:500
+2026-05-12:
+- 优化代码功能
 2026-05-12:
 - 优化代码功能
 2026-05-12:
