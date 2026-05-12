@@ -48,7 +48,7 @@ call_minimax_chat() {
     local USER_JSON=$(printf '%s' "$USER_PROMPT" | jq -Rs '.')
 
     local REQUEST_BODY=$(jq -n \
-        --arg model "abab5.5-chat" \
+        --arg model "MiniMax-M2"  \
         --argjson system_content "$SYSTEM_JSON" \
         --argjson user_content "$USER_JSON" \
         '{
