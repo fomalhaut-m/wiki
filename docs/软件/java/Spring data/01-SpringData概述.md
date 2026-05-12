@@ -16,4 +16,4 @@ Spring Data的任务是为数据访问提供一个熟悉且一致的，基于Spr
 
 # 继承图
 
-![Repository](image/Repository.png)
+![Repository](assets/Repository.png)

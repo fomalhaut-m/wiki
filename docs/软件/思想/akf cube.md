@@ -13,14 +13,14 @@
 
  这些轴及其含义如下图 1 所示。
 
- ![AKF 比例立方体 - X、Y 和 Z 轴说明](image/AKF_Scale_Cube.gif)
+ ![AKF 比例立方体 - X、Y 和 Z 轴说明](assets/AKF_Scale_Cube.gif)
 
  ​                  图1
 
 
  下面的图 2 显示了如何在现代架构中部署多维数据集，分解服务（有时称为微服务架构）、克隆服务和数据源以及将客户等类似对象划分为“pod”。
 
- ![AKF Scale Cube - X、Y 和 Z 轴拆分示例](image/Scale_Cube_2.gif)
+ ![AKF Scale Cube - X、Y 和 Z 轴拆分示例](assets/Scale_Cube_2.gif)
 
  ​                  图2
 
@@ -35,7 +35,7 @@
 
  图 3 解释了 X 轴可扩展性的优缺点，并通过传统的 3 层架构来解释它是如何实现的。
 
- ![AKF Scale Cube - X 轴拆分优点和缺点](image/X_Axis_Scale_Cube.gif)
+ ![AKF Scale Cube - X 轴拆分优点和缺点](assets/X_Axis_Scale_Cube.gif)
 
  ​                  图 3
 
@@ -49,7 +49,7 @@
 
  图 4 解释了 Y 轴可扩展性的优缺点，并显示了一个故障隔离的服务示例，每个服务都有自己的数据存储，用于故障隔离。
 
- ![AKF Scale Cube - Y 轴服务拆分优点和缺点](image/Y_Axis_Scale_Cube.gif)
+ ![AKF Scale Cube - Y 轴服务拆分优点和缺点](assets/Y_Axis_Scale_Cube.gif)
 
  ​                  图 4
 
@@ -62,7 +62,7 @@
 
  图 5 解释了 Z 轴可扩展性的优缺点，并显示了一个故障隔离的 pod 结构，在美国有 2 个独特的客户 pod，在欧盟有 2 个。请注意，Z 轴比例的另一个好处是能够对 Pod 进行分割，以符合当地的隐私法，例如欧盟的 GDPR。
 
- ![AKF Scale Cube - Z 轴拆分优点和缺点](image/Z_Axis_Scale_Cube.gif)
+ ![AKF Scale Cube - Z 轴拆分优点和缺点](assets/Z_Axis_Scale_Cube.gif)
 
  ​                  图5
 

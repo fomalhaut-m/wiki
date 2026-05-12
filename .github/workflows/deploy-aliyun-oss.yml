@@ -41,7 +41,7 @@ jobs:
       - name: 🗑️ 清空OSS旧文件
         run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
 
-      # 🔥 修复强制下载：浏览器正常渲染
+      # ☁️ 上传文件
       - name: ☁️ 上传文件
         run: |
           ossutil cp site/ oss://vexrune-wike/ -r -f --acl public-read
@@ -51,26 +51,6 @@ jobs:
           ossutil set-meta oss://vexrune-wike// "Content-Type:text/html; charset=utf-8" --include "*.html" -r
           ossutil set-meta oss://vexrune-wike// "Content-Type:text/css; charset=utf-8" --include "*.css" -r
           ossutil set-meta oss://vexrune-wike// "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r
-
-      # ===================== 核心修复：set-props → set-meta =====================
-      - name: ⚙️ HTML 设置不缓存
-        run: ossutil set-meta oss://vexrune-wike/ --meta "Cache-Control:no-cache" --include "*.html" -r
-
-      - name: ⚙️ 静态资源长缓存
-        run: |
-          ossutil set-meta oss://vexrune-wike/ \
-            --meta "Cache-Control:public, max-age=31536000" \
-            --include "*.css,*.js,*.png,*.jpg,*.svg,*.woff,*.woff2" -r
-      # ==========================================================================
-
-      - name: ✅ 验证文件状态
-        run: ossutil stat oss://vexrune-wike/index.html
-
-      - name: 🔄 自动刷新CDN
-        run: |
-          pip install aliyun-python-sdk-core aliyun-python-sdk-cdn
-          aliyuncli configure set access-key-id ${{ secrets.ALIY_ACCESS_KEY_ID }} access-key-secret ${{ secrets.ALIY_ACCESS_KEY_SECRET }} region-id cn-shenzhen
-          aliyuncli cdn RefreshObjectCaches --ObjectPath https://wiki.vexrune.top/ --ObjectType Directory
 
       - name: 🎉 部署成功
         run: echo "✅ 网站正常访问：https://wiki.vexrune.top"

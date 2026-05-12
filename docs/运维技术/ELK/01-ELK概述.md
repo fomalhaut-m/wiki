@@ -61,7 +61,7 @@ https://elasticsearch.cn/
 
 架构图一：
 
-![img](image/830693-20180507233846281-213246344.png)
+![img](assets/830693-20180507233846281-213246344.png)
 
 这是最简单的一种ELK架构方式。优点是搭建简单，易于上手。缺点是Logstash耗资源较大，运行占用CPU和内存高。另外没有消息队列缓存，存在数据丢失隐患。
 
@@ -69,13 +69,13 @@ https://elasticsearch.cn/
 
 架构图二：
 
-![img](image/830693-20180507233859333-807727717.png)
+![img](assets/830693-20180507233859333-807727717.png)
 
 此种架构引入了消息队列机制，位于各个节点上的Logstash Agent先将数据/日志传递给Kafka（或者Redis），并将队列中消息或数据间接传递给Logstash，Logstash过滤、分析后将数据传递给Elasticsearch存储。最后由Kibana将日志和数据呈现给用户。因为引入了Kafka（或者Redis）,所以即使远端Logstash server因故障停止运行，数据将会先被存储下来，从而避免数据丢失。
 
 架构图三：
 
-![img](image/830693-20180507233909103-387637909.png)
+![img](assets/830693-20180507233909103-387637909.png)
 
 此种架构将收集端logstash替换为beats，更灵活，消耗资源更少，扩展性更强。同时可配置Logstash 和Elasticsearch 集群用于支持大集群系统的运维日志数据监控和查询。
 
@@ -83,7 +83,7 @@ https://elasticsearch.cn/
 
 Filebeat由两个主要组件组成：prospectors 和 harvesters。这两个组件协同工作将文件变动发送到指定的输出中。
 
-![img](image/830693-20180507234215200-1939816692.png)
+![img](assets/830693-20180507234215200-1939816692.png)
 
 **Harvester（收割机）：**负责读取单个文件内容。每个文件会启动一个Harvester，每个Harvester会逐行读取各个文件，并将文件内容发送到制定输出中。Harvester负责打开和关闭文件，意味在Harvester运行的时候，文件描述符处于打开状态，如果文件在收集中被重命名或者被删除，Filebeat会继续读取此文件。所以在Harvester关闭之前，磁盘不会被释放。默认情况filebeat会保持文件打开的状态，直到达到[`close_inactive`](https://www.elastic.co/guide/en/beats/filebeat/5.5/configuration-filebeat-options.html#close-inactive)（如果此选项开启，filebeat会在指定时间内将不再更新的文件句柄关闭，时间从harvester读取最后一行的时间开始计时。若文件句柄被关闭后，文件发生变化，则会启动一个新的harvester。关闭文件句柄的时间不取决于文件的修改时间，若此参数配置不当，则可能发生日志不实时的情况，由scan_frequency参数决定，默认10s。Harvester使用内部时间戳来记录文件最后被收集的时间。例如：设置5m，则在Harvester读取文件的最后一行之后，开始倒计时5分钟，若5分钟内文件无变化，则关闭文件句柄。默认5m）。
 
@@ -109,7 +109,7 @@ Filebeat之所以能保证事件至少被传递到配置的输出一次，没有
 
 Logstash事件处理有三个阶段：inputs → filters → outputs。是一个接收，处理，转发日志的工具。支持系统日志，webserver日志，错误日志，应用日志，总之包括所有可以抛出来的日志类型。
 
-![img](image/830693-20171214144021295-963037641.png)
+![img](assets/830693-20171214144021295-963037641.png)
 
  
 
