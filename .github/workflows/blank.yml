@@ -63,21 +63,14 @@ jobs:
             -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
             -L CH
 
-      - name: Upload test files
+      - name: Upload files
         run: |
           ossutil cp index.html oss://vexrune-wike/index.html --acl public-read --force
           ossutil cp style.css oss://vexrune-wike/style.css --acl public-read --force
           ossutil cp app.js oss://vexrune-wike/app.js --acl public-read --force
 
-      - name: Check ossutil help
-        run: ossutil help | head -100
-        
-      - name: 设置HTML Content-Type
-        run: ossutil set-properties oss://vexrune-wike/ --include "*.html" --meta "Content-Type:text/html; charset=utf-8" -r
-
-
-      - name: Set CSS Content-Type
-        run: ossutil help | grep -i set
-
-      - name: Set JS Content-Type
-        run: ossutil set-properties oss://vexrune-wike/ --include "*.js" --meta "Content-Type:application/javascript; charset=utf-8" -r
+      - name: Set content types
+        run: |
+          ossutil set-meta oss://vexrune-wike/index.html "Content-Type:text/html; charset=utf-8"
+          ossutil set-meta oss://vexrune-wike/style.css "Content-Type:text/css; charset=utf-8"
+          ossutil set-meta oss://vexrune-wike/app.js "Content-Type:application/javascript; charset=utf-8"
