@@ -20,8 +20,6 @@ fi
 echo "✅ 发现未推送的提交："
 echo "$UNPUSHED" | sed 's/^/   /'
 
-
-
 echo -e "\n🤖 生成更新日志..."
 
 LOG_FILE="docs/log/index.md"
@@ -47,26 +45,66 @@ else
     DEFAULT_ENTRY="优化代码功能"
 fi
 
-DEFAULT_LOG_CONTENT=$(printf "%s:\n- %s\n%s" "$TODAY" "$DEFAULT_ENTRY" "$EXISTING_LOGS" | head -20)
+DEFAULT_LOG_CONTENT=$(printf "%s:\n1. %s\n%s" "$TODAY" "$DEFAULT_ENTRY" "$EXISTING_LOGS" | head -30)
 
-COMMIT_INFO="今天日期：$TODAY
+USER_PROMPT="今天日期：${TODAY}
+
 现有日志内容：
-$EXISTING_LOGS
+${EXISTING_LOGS}
+
 本次Git变更内容：
-$DIFF_CONTENT
+${DIFF_CONTENT}
+
 请生成完整的新日志内容，合并当天的所有变更，保持固定格式。"
 
-if NEW_LOG_CONTENT=$(bash "./scripts/call-minimax-api.sh" "$COMMIT_INFO" 2>/dev/null); then
-    if [ -z "$NEW_LOG_CONTENT" ]; then
+SYSTEM_PROMPT="你是专业的项目变更日志生成助手。
+
+【输出格式】（严格遵守）
+```log
+YYYY-MM-DD:
+1. [emoji] 变更内容描述（动宾结构）
+2. [emoji] 变更内容描述
+- [emoji] 第三条描述
+```
+
+【关键规则】
+1. 日期格式：YYYY-MM-DD，如 2026-05-12
+2. 同一天的所有变更必须合并到同一个日期条目下，禁止重复创建相同日期
+3. 不同日期按倒序排列，最新日期在最上面
+4. 最多保留最近10个日期的日志
+
+【Emoji使用】
+- ✨ 新功能/新增内容
+- 📝 文档更新/文案调整
+- 🔧 配置/脚本优化
+- 🐛 修复问题/BUG
+- 🎨 格式/样式调整
+- 🚀 性能/效率提升
+- 🗑️ 删除冗余内容
+- ♻️ 重构代码/逻辑
+- ✅ 完成功能开发
+- 📦 新增文件/依赖
+- 🔄 移动/重命名文件
+- 👤 用户/权限相关
+
+【内容要求】
+- 动宾结构：动词+具体对象，如"重构push-with-log.sh脚本"
+- 明确变更范围：具体模块/文件/功能名称
+- 控制在50字以内
+
+【输出限制】
+- 必须只输出log代码块内容
+- 不要输出任何解释、说明或额外文字
+- 不要输出代码块标记```log```，只输出内部内容"
+
+if NEW_LOG_CONTENT=$(bash "./scripts/call-minimax-api.sh" "$USER_PROMPT" "$SYSTEM_PROMPT" 2>/dev/null); then
+    if [ -z "$NEW_LOG_CONTENT" ] || [ "${#NEW_LOG_CONTENT}" -lt 10 ]; then
+        echo "⚠️  AI返回内容无效，使用默认日志内容"
         NEW_LOG_CONTENT="$DEFAULT_LOG_CONTENT"
     fi
 else
     echo "⚠️  API调用失败，使用默认日志内容"
     NEW_LOG_CONTENT="$DEFAULT_LOG_CONTENT"
-fi
-
-if echo "$NEW_LOG_CONTENT" | grep -q "^\`\`\`log"; then
-    NEW_LOG_CONTENT=$(echo "$NEW_LOG_CONTENT" | sed -n '/^```log$/,/^```$/p' | sed '1d;$d')
 fi
 
 echo "✅ 生成的日志内容："
