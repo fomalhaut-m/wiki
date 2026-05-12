@@ -177,9 +177,75 @@ bash scripts/push-with-log.sh
 
 ## 📋 脚本说明
 
-| 脚本路径 | 说明 | 参数 |
-|----------|------|------|
-| `scripts/push-with-log.sh` | 推送代码并自动更新日志 | 需要设置 MINIMAX_API_KEY 环境变量 |
+项目使用 Python 脚本进行自动化操作，位于 `scripts/` 目录：
+
+| 脚本 | 说明 |
+|------|------|
+| `git-commit.py` | AI 生成 Git Commit 消息并提交 |
+| `push_with_log.py` | 推送代码并自动生成更新日志 |
+| `call_minimax_api.py` | 调用 Minimax API 的公共模块 |
+
+### 前置条件
+
+```bash
+# 需要安装 Python 3
+python --version
+
+# 需要设置 MINIMAX_API_KEY 环境变量
+export MINIMAX_API_KEY=your_api_key_here
+```
+
+### 使用方法
+
+#### 1. AI 生成 Commit 消息
+
+```bash
+python scripts/git-commit.py
+```
+
+工作流程：
+1. 检测 git 变更
+2. 调用 AI 生成简洁的 commit 消息
+3. 自动执行 `git add .` 和 `git commit`
+
+#### 2. 推送代码并更新日志
+
+```bash
+python scripts/push_with_log.py
+```
+
+工作流程：
+1. 检测未推送的提交
+2. 调用 AI 生成简短的更新日志
+3. 写入 `docs/log/index.md`
+4. 自动提交并推送到远程
+
+### 合并操作（推荐）
+
+一次性完成 commit 和 push：
+
+```bash
+python scripts/git-commit.py && python scripts/push_with_log.py
+```
+
+或者分开执行：
+
+```bash
+# 1. 先提交代码
+python scripts/git-commit.py
+
+# 2. 再推送并更新日志
+python scripts/push_with_log.py
+```
+
+### 配置 API Key
+
+如果没有设置环境变量，脚本会报错退出。建议将 API Key 添加到 shell 配置文件中：
+
+```bash
+# ~/.bashrc 或 ~/.zshrc
+export MINIMAX_API_KEY="your_api_key_here"
+```
 
 ---
 
