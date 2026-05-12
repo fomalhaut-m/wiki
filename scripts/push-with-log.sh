@@ -68,8 +68,12 @@ call_minimax_chat() {
         -H "Authorization: Bearer $API_KEY" \
         -d "$REQUEST_BODY")
 
+    echo "AI_RESULT: $AI_RESULT"
+
     local HTTP_STATUS=$(echo "$AI_RESULT" | grep -oP 'HTTP_STATUS:\K\d+$')
     local RESPONSE_BODY=$(echo "$AI_RESULT" | sed '$d')
+
+
 
     if [ "$HTTP_STATUS" != "200" ]; then
         echo "$DEFAULT_OUTPUT"
