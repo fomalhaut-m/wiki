@@ -13,6 +13,18 @@ def run_cmd(cmd, capture=True):
         subprocess.run(cmd, shell=True)
         return ""
 
+def get_unpushed():
+    result = run_cmd("git log origin/main..HEAD --oneline")
+    if result:
+        return result
+    return run_cmd("git log origin/master..HEAD --oneline")
+
+def get_diff():
+    result = run_cmd("git log origin/main..HEAD --stat")
+    if result:
+        return result
+    return run_cmd("git log origin/master..HEAD --stat")
+
 def sec(title):
     print(f"\n  ◆ {title}")
 
@@ -42,18 +54,19 @@ def main():
     done("Git 环境正常")
 
     info("检查未推送提交...")
-    unpushed = run_cmd("git log --oneline origin/main..HEAD 2>/dev/null || git log --oneline origin/master..HEAD 2>/dev/null")
+    unpushed = get_unpushed()
 
     if not unpushed:
         info("没有未推送的提交，退出")
         sys.exit(0)
 
-    k("提交数", f"{len(unpushed.split(chr(10)))} 个")
+    commit_count = len([l for l in unpushed.split('\n') if l.strip()])
+    k("提交数", f"{commit_count} 个")
 
     sec("获取变更")
-    diff_content = run_cmd("git log --stat origin/main..HEAD 2>/dev/null || git log --stat origin/master..HEAD 2>/dev/null")
+    diff_content = get_diff()
     md_count = diff_content.count(".md") if diff_content else 0
-    k("文件数", f"{len(diff_content.split(chr(10)))} 行")
+    k("文件数", f"{len(diff_content.split(chr(10)))} 行" if diff_content else "0 行")
     k("MD文件", f"{md_count} 个" if md_count else "无")
 
     sec("读取日志")
@@ -171,7 +184,7 @@ YYYY-MM-DD:
         "# 更新日志", "", "这里记录项目的主要更新和变更。", "",
         "```log", new_log_content, "```", "",
         "---", "",
-        "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/wike/commits/main)"
+        "更多历史记录请查看 [Git 提交历史](https://github.com/fomalhaut-m/rex-wiki/commits/main)"
     ]
     try:
         with open(log_file, 'w', encoding='utf-8') as f:
