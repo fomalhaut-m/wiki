@@ -1,70 +1,70 @@
-name: 🚀 Deploy to Aliyun OSS (最终无错版)
+# name: 🚀 Deploy to Aliyun OSS (最终无错版)
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+# # on:
+# #   push:
+# #     branches:
+# #       - main
+# #   workflow_dispatch:
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: 📦 拉取代码
-        uses: actions/checkout@v4
+#     steps:
+#       - name: 📦 拉取代码
+#         uses: actions/checkout@v4
 
-      - name: 🐍 配置Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+#       - name: 🐍 配置Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
 
-      - name: 📥 安装MkDocs
-        run: pip install mkdocs mkdocs-material
+#       - name: 📥 安装MkDocs
+#         run: pip install mkdocs mkdocs-material
 
-      - name: 🏗️ 构建静态网站
-        run: mkdocs build
+#       - name: 🏗️ 构建静态网站
+#         run: mkdocs build
 
-      # ✅ 你指定的 阿里云官方一键安装脚本
-      - name: 📁 官方一键安装 ossutil
-        run: |
-          sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
-          ossutil --version
+#       # ✅ 你指定的 阿里云官方一键安装脚本
+#       - name: 📁 官方一键安装 ossutil
+#         run: |
+#           sudo -v ; curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+#           ossutil --version
 
-      - name: 🔑 配置OSS凭证
-        run: |
-          ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIY_ACCESS_KEY_ID }} -k ${{ secrets.ALIY_ACCESS_KEY_SECRET }} -L CH
+#       - name: 🔑 配置OSS凭证
+#         run: |
+#           ossutil config -e oss-cn-shenzhen.aliyuncs.com -i ${{ secrets.ALIY_ACCESS_KEY_ID }} -k ${{ secrets.ALIY_ACCESS_KEY_SECRET }} -L CH
 
-      - name: 🗑️ 清空OSS旧文件
-        run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
+#       - name: 🗑️ 清空OSS旧文件
+#         run: ossutil rm -r oss://vexrune-wike/ --include "*" -f
 
-      # 🔥 修复强制下载：浏览器正常渲染
-      - name: ☁️ 上传文件
-        run: |
-          ossutil cp -r site/ oss://vexrune-wike/ \
-            --acl public-read \
-            --force \
-            --meta "Content-Disposition:inline"
+#       # 🔥 修复强制下载：浏览器正常渲染
+#       - name: ☁️ 上传文件
+#         run: |
+#           ossutil cp -r site/ oss://vexrune-wike/ \
+#             --acl public-read \
+#             --force \
+#             --meta "Content-Disposition:inline"
 
-      # ===================== 核心修复：set-props → set-meta =====================
-      - name: ⚙️ HTML 设置不缓存
-        run: ossutil set-meta oss://vexrune-wike/ --meta "Cache-Control:no-cache" --include "*.html" -r
+#       # ===================== 核心修复：set-props → set-meta =====================
+#       - name: ⚙️ HTML 设置不缓存
+#         run: ossutil set-meta oss://vexrune-wike/ --meta "Cache-Control:no-cache" --include "*.html" -r
 
-      - name: ⚙️ 静态资源长缓存
-        run: |
-          ossutil set-meta oss://vexrune-wike/ \
-            --meta "Cache-Control:public, max-age=31536000" \
-            --include "*.css,*.js,*.png,*.jpg,*.svg,*.woff,*.woff2" -r
-      # ==========================================================================
+#       - name: ⚙️ 静态资源长缓存
+#         run: |
+#           ossutil set-meta oss://vexrune-wike/ \
+#             --meta "Cache-Control:public, max-age=31536000" \
+#             --include "*.css,*.js,*.png,*.jpg,*.svg,*.woff,*.woff2" -r
+#       # ==========================================================================
 
-      - name: ✅ 验证文件状态
-        run: ossutil stat oss://vexrune-wike/index.html
+#       - name: ✅ 验证文件状态
+#         run: ossutil stat oss://vexrune-wike/index.html
 
-      - name: 🔄 自动刷新CDN
-        run: |
-          pip install aliyun-python-sdk-core aliyun-python-sdk-cdn
-          aliyuncli configure set access-key-id ${{ secrets.ALIY_ACCESS_KEY_ID }} access-key-secret ${{ secrets.ALIY_ACCESS_KEY_SECRET }} region-id cn-shenzhen
-          aliyuncli cdn RefreshObjectCaches --ObjectPath https://wiki.vexrune.top/ --ObjectType Directory
+#       - name: 🔄 自动刷新CDN
+#         run: |
+#           pip install aliyun-python-sdk-core aliyun-python-sdk-cdn
+#           aliyuncli configure set access-key-id ${{ secrets.ALIY_ACCESS_KEY_ID }} access-key-secret ${{ secrets.ALIY_ACCESS_KEY_SECRET }} region-id cn-shenzhen
+#           aliyuncli cdn RefreshObjectCaches --ObjectPath https://wiki.vexrune.top/ --ObjectType Directory
 
-      - name: 🎉 部署成功
-        run: echo "✅ 网站正常访问：https://wiki.vexrune.top"
+#       - name: 🎉 部署成功
+#         run: echo "✅ 网站正常访问：https://wiki.vexrune.top"
