@@ -63,18 +63,28 @@ jobs:
             -k ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }} \
             -L CH
 
-      - name: Upload files
+      - name: ossutil help
         run: |
           ossutil help
+      - name: ossutil help cp
+        run: |
+          ossutil help cp
+      - name: ossutil help set-meta
+        run: |
+          ossutil help set-meta
+      - name: Upload files
+        run: |
           ossutil cp index.html oss://vexrune-wike/index.html --acl public-read --force
           ossutil cp style.css oss://vexrune-wike/style.css --acl public-read --force
           ossutil cp app.js oss://vexrune-wike/app.js --acl public-read --force
 
-      - name: Set content types
+      - name: Set content types one by one
         run: |
           ossutil set-meta oss://vexrune-wike/index.html "Content-Type:text/html; charset=utf-8"
           ossutil set-meta oss://vexrune-wike/style.css "Content-Type:text/css; charset=utf-8"
           ossutil set-meta oss://vexrune-wike/app.js "Content-Type:application/javascript; charset=utf-8"
-          ossutil set-meta oss://vexrune/ "Content-Type:text/html; charset=utf-8" --include "*.html" -r
-          ossutil set-meta oss://vexrune/ "Content-Type:text/css; charset=utf-8" --include "*.css" -r
-          ossutil set-meta oss://vexrune/ "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r
+      - name: Set content types all
+        run: |
+          ossutil set-meta oss://vexrune-wike// "Content-Type:text/html; charset=utf-8" --include "*.html" -r
+          ossutil set-meta oss://vexrune-wike// "Content-Type:text/css; charset=utf-8" --include "*.css" -r
+          ossutil set-meta oss://vexrune-wike// "Content-Type:application/javascript; charset=utf-8" --include "*.js" -r
