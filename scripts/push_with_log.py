@@ -104,46 +104,29 @@ def main():
 
     k("默认描述", default_entry)
 
-    user_prompt = f"""今天日期：{today}
+    user_prompt = f"""Git commits:
+{unpushed}
 
-现有日志内容：
-{existing_logs}
+生成一句简短的更新日志总结。"""
 
-本次 Git 变更内容：
-{diff_content}
+    system_prompt = """你是一个中文写作助手，根据 Git commits 生成简短的项目更新日志。
 
-请生成完整的新日志内容，合并当天的所有变更，保持固定格式。"""
+【输出要求】
+只输出1-3行简短的日志，每行格式：
 
-    system_prompt = """你是专业的项目变更日志生成助手。
-
-【输出格式】（严格遵守）
-```log
 YYYY-MM-DD:
-1. [emoji] 变更内容描述（动宾结构）
-2. [emoji] 变更内容描述
-```
+- 🔧 简短描述
 
-【关键规则】
-1. 日期格式：YYYY-MM-DD，如 2026-05-12
-2. 同一天的所有变更必须合并到同一个日期条目下
-3. 不同日期按倒序排列，最新日期在最上面
-4. 最多保留最近10个日期的日志
+【规则】
+1. 一句话总结本次所有变更
+2. 使用 emoji：🔧=脚本/代码，📝=文档，✨=新功能
+3. 控制在15字以内
+4. 不要分析，不要解释，不要 thinking
 
-【Emoji使用】
-- ✨ 新功能/新增内容
-- 📝 文档更新/文案调整
-- 🔧 配置/脚本优化
-- 🐛 修复问题/BUG
-- 🎨 格式/样式调整
-- 🚀 性能/效率提升
-- 🗑️ 删除冗余内容
-- ♻️ 重构代码/逻辑
-
-【内容要求】
-- 必须使用中文
-- 动宾结构：动词+具体对象
-- 控制在50字以内
-- 只输出 log 代码块内部内容"""
+【示例】
+2026-05-13:
+- 🔧 优化脚本工具
+- 📝 完善文档内容"""
 
     k("Prompt", f"{len(user_prompt)} 字符")
 
@@ -151,7 +134,7 @@ YYYY-MM-DD:
     info("调用 MiniMax API...")
     start_time = datetime.datetime.now()
 
-    default_log_content = f"{today}:\n1. {default_entry}\n{existing_logs}"
+    default_log_content = f"{today}:\n- 🔧 {default_entry}\n{existing_logs}"
     default_log_content = '\n'.join(default_log_content.split('\n')[:30])
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -161,6 +144,9 @@ YYYY-MM-DD:
     try:
         new_log_content = call_api(user_prompt, system_prompt)
         new_log_content = re.sub(r'<think>.*?', '', new_log_content, flags=re.DOTALL).strip()
+        new_log_content = re.sub(r'^```log\s*', '', new_log_content)
+        new_log_content = re.sub(r'^```\s*', '', new_log_content)
+        new_log_content = re.sub(r'\s*```$', '', new_log_content)
         duration = (datetime.datetime.now() - start_time).total_seconds()
         done(f"AI 调用成功 ({duration:.1f}s)")
         k("长度", f"{len(new_log_content)} 字符")
@@ -173,9 +159,9 @@ YYYY-MM-DD:
         new_log_content = default_log_content
 
     sec("日志预览")
-    for i, l in enumerate(new_log_content.split('\n')[:6]):
+    for i, l in enumerate(new_log_content.split('\n')[:4]):
         print(f"    {l[:46]}")
-    if len(new_log_content.split('\n')) > 6:
+    if len(new_log_content.split('\n')) > 4:
         print(f"    ... 共 {len(new_log_content.split(chr(10)))} 行")
 
     sec("写入文件")
