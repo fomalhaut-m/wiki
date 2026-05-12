@@ -16,6 +16,7 @@
 - [03-GetX状态管理学习（初学通俗版）](./02-GetX系列教程/03-GetX状态管理学习（初学通俗版）.md) — 不用setState的响应式状态管理
 - [04-GetX依赖管理学习（初学通俗版）](./02-GetX系列教程/04-GetX依赖管理学习（初学通俗版）.md) — 不用手动new实例的全局依赖管理
 - [05-GetX官方完整参考文档](./02-GetX系列教程/05-GetX官方完整参考文档.md) — GetX 官方完整文档参考
+- [06-GetX本地存储GetStorage使用教程](./02-GetX系列教程/06-GetX本地存储GetStorage使用教程.md) — 轻量级键值对存储方案
 
 ### 03-功能实战指南
 - [01-构建打包基础指南](./03-功能实战指南/01-构建打包基础指南.md) — APK / Linux / Windows / iOS / macOS 多平台打包
@@ -28,6 +29,16 @@
 ### 04-经验扩展总结
 - [01-Flutter Android 打包核心配置](./04-经验扩展总结/01-Flutter Android 打包核心配置.md) — 通用打包配置 + 常见坑点总结
 - [02-Flutter 项目开发经验积累](./04-经验扩展总结/02-Flutter 项目开发经验积累.md) — 实战踩坑总结 + 最佳实践分享
+
+### 05-数据存储专题（存储方案对比与实战教程）
+- [数据存储方案总览](./05-数据存储专题/README.md) — SharedPreferences / GetStorage / Hive / drift / floor / sqflite 对比
+- [01-SharedPreferences使用教程](./05-数据存储专题/01-SharedPreferences使用教程.md) — 官方轻量级键值对存储
+- [02-GetStorage使用教程](./05-数据存储专题/02-GetStorage使用教程.md) — GetX官方配套轻量存储
+- [03-Hive使用教程](./05-数据存储专题/03-Hive使用教程.md) — 高性能NoSQL文档数据库
+- [04-drift使用教程](./05-数据存储专题/04-drift使用教程.md) — Flutter官方推荐的SQLite ORM（全平台支持）
+- [05-floor使用教程](./05-数据存储专题/05-floor使用教程.md) — 类似Android Room的SQLite ORM
+- [06-sqflite使用教程](./05-数据存储专题/06-sqflite使用教程.md) — 原生SQLite直接操作
+- [07-技术栈对比总览](./06-技术栈对比总览.md) — 全维度Flutter技术方案对比（路由/状态管理/存储/音视频/UI/云服务/推送/地图/AI）
 
 ## 学习说明
 
