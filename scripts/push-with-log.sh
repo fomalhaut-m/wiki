@@ -41,6 +41,7 @@ fi
 # 调用 Minimax Chat API 的函数
 call_minimax_chat() {
     local USER_PROMPT="$1"
+    local DEFAULT_ENTRY="$2"
     
     # 系统提示词 - 定义 AI 的角色和行为
     local SYSTEM_PROMPT="你是一个专业的文档更新日志生成助手。
@@ -68,15 +69,29 @@ call_minimax_chat() {
 EOF
 )
     
-    AI_RESULT=$(curl -s -X POST https://api.minimax.chat/v1/chat/completions \
+    AI_RESULT=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST https://api.minimax.chat/v1/chat/completions \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer $API_KEY" \
       -d "$REQUEST_JSON")
     
+    # 提取HTTP状态码和响应内容
+    HTTP_STATUS=$(echo "$AI_RESULT" | grep -oP 'HTTP_STATUS:\K\d+$')
+    RESPONSE_BODY=$(echo "$AI_RESULT" | sed '$d')
+    
+    # 先检查HTTP状态码
+    if [ "$HTTP_STATUS" != "200" ]; then
+        echo "⚠️ API调用失败，HTTP状态码: $HTTP_STATUS" >&2
+        echo "$RESPONSE_BODY" >&2
+        echo "$DEFAULT_ENTRY"
+        return
+    fi
+    
     # 从 chat 接口响应中提取内容
-    LOG_ENTRY=$(echo "$AI_RESULT" | grep -oP '(?<="content":")[^"]+' | head -1)
+    LOG_ENTRY=$(echo "$RESPONSE_BODY" | grep -oP '(?<="content":")[^"]+' | head -1)
     if [ -z "$LOG_ENTRY" ] || [ "$LOG_ENTRY" = "null" ]; then
-        LOG_ENTRY="文档更新"
+        echo "⚠️ API返回内容为空，使用默认日志" >&2
+        echo "$DEFAULT_ENTRY"
+        return
     fi
     
     echo "$LOG_ENTRY"
@@ -130,11 +145,24 @@ if [ "$HAS_UNCOMMITTED" = true ] && [ -n "$API_KEY" ]; then
     DIFF=$(git diff --stat)
     echo "$DIFF"
     
+    # 动态生成默认日志：识别变更类型
+    if echo "$DIFF" | grep -q "docs/.*\.md"; then
+        # 统计新增/修改的文档数量
+        DOC_COUNT=$(echo "$DIFF" | grep -c "\.md")
+        DEFAULT_ENTRY="更新${DOC_COUNT}篇文档"
+        # 识别常见操作
+        if echo "$DIFF" | grep -q "新增"; then DEFAULT_ENTRY="新增文档"; fi
+        if echo "$DIFF" | grep -q "整理\|分类\|重构"; then DEFAULT_ENTRY="整理文档分类结构"; fi
+        if echo "$DIFF" | grep -q "GetX\|getx"; then DEFAULT_ENTRY="更新GetX系列教程"; fi
+    else
+        DEFAULT_ENTRY="代码功能更新"
+    fi
+    
     echo "🔧 调用 Minimax Chat API..."
     USER_PROMPT="请分析以下Git代码变更，生成更新日志条目：\n\n$DIFF"
-    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT")
+    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT" "$DEFAULT_ENTRY")
     
-    echo "✅ AI 生成: $LOG_ENTRY"
+    echo "✅ 最终日志: $LOG_ENTRY"
     update_log "$LOG_ENTRY"
 
 # 如果没有未提交变更但有未推送提交且有 API Key
@@ -145,9 +173,9 @@ elif [ "$HAS_UNCOMMITTED" = false ] && [ "$HAS_UNPUSHED" = true ] && [ -n "$API_
     
     echo "🔧 调用 Minimax Chat API..."
     USER_PROMPT="请将以下Git提交信息转换为更新日志条目：\n\n$LATEST_COMMIT"
-    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT")
+    LOG_ENTRY=$(call_minimax_chat "$USER_PROMPT" "$LATEST_COMMIT")
     
-    echo "✅ AI 生成: $LOG_ENTRY"
+    echo "✅ 最终日志: $LOG_ENTRY"
     update_log "$LOG_ENTRY"
 
 elif [ "$HAS_UNCOMMITTED" = true ] && [ -z "$API_KEY" ]; then
