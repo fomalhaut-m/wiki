@@ -16,6 +16,7 @@
 - [10-后台播放audio_service](./10-后台播放audio_service.md) — Android Service / 通知栏 / 锁屏控制
 - [11-打包发布](./11-打包发布.md) — APK 签名 / 应用市场 / CI/CD
 - [Flutter Android 打包核心配置](./Flutter Android 打包核心配置.md) — 通用打包配置 + 常见坑
+- [GetX 官方文档](./getx.md) — GetX 官方文档
 
 ## 学习说明
 
