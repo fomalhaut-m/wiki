@@ -79,12 +79,24 @@ wike/                              # 项目根目录
 git clone https://github.com/fomalhaut-m/wike.git
 cd wike
 
-# 2. 安装依赖
-pip install mkdocs mkdocs-material
+# 2. 安装 python3-venv (Ubuntu/Debian)
+sudo apt install python3-venv
 
-# 3. 启动开发服务器
+# 3. 创建虚拟环境
+python3 -m venv venv
+
+# 4. 激活虚拟环境
+source venv/bin/activate
+
+# 5. 安装 mkdocs 依赖
+pip install mkdocs mkdocs-material mkdocs-nav-weight
+
+# 6. 启动开发服务器
 mkdocs serve
 ```
+
+> **提示**: 如果遇到 `externally-managed-environment` 错误，说明系统启用了 Python 环境保护机制，
+> 请使用虚拟环境方式安装（推荐），或使用 `pip install --break-system-packages`（不推荐）。
 
 ### 常用命令
 
@@ -199,7 +211,9 @@ git config core.hooksPath .githooks
 | Material 主题 | https://squidfunk.github.io/mkdocs-material/ |
 | MkDocs 中文文档 | https://mkdocs.pythonlang.cn/ |
 | Minimax API | https://api.minimax.chat/ |
+| mkdocs-nav-weight | https://github.com/shu307/mkdocs-nav-weight/blob/main/README_CN.md | 
 | 阿里云 OSS | https://www.aliyun.com/product/oss |
+
 
 ---
 

@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
 
       - name: 📥 安装MkDocs
-        run: pip install mkdocs mkdocs-material
+        run: pip install mkdocs mkdocs-material mkdocs-nav-weight
 
       - name: 🏗️ 构建静态网站
         run: mkdocs build

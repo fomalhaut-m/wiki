@@ -34,6 +34,7 @@ theme:
     - header.autohide           # 滚动时自动隐藏头部
     # 表格功能
     - content.table             # 表格排序
+    - toc.integrate            # 可选：目录整合
 
   palette:
     # 深色模式 - 黑灰色调
@@ -99,7 +100,20 @@ plugins:
       lang:
         - en
         - zh
-  - search
+  - mkdocs-nav-weight:
+      # 当为true时，章节名称将使用其页面的title，而不是文件夹名称。例如，你可能有一个名为 的文件夹，但想让该部分的名称为 。设置该参数以实现这种行为。
+      section_renamed: true
+      # 用于index.md页面的weight值，以确保它始终在文件夹中排在首位。文件夹中的所有其他页面都应具有大于此值的weight值（以便它们在index.md页面之后列出）。
+      index_weight: -10
+      # 控制当在 Markdown 元数据中检测到无效值时是否发送Warning警告。
+      warning: true
+      # 默认情况下，页面按权重值从低到高排序。将此值设置为true将按从高到低的顺序排序。
+      reverse: false
+      # 一个选项，用于控制是否应将headless页面包含在nav.pages中，该属性供一些插件使用，例如：mkdocs-pdf-export-plugin。
+      headless_included: false
+      # 默认页面权重值，用于未指定权重值的页面。
+      default_page_weight: 0
+
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -112,31 +126,3 @@ extra:
       link: https://space.bilibili.com/32121230
       name: Bilibili
 
-nav:
-  - 首页: index.md
-  - 软件技术:
-    - 软件: 软件/index.md
-    - Java: 软件/java/index.md
-    - Python: 软件/python/index.md
-    - 前端技术: 软件/前端技术/index.md
-    - 数据库: 数据库/index.md
-    - 架构师: 软件/架构师/index.md
-    - 设计模式: 软件/设计模式/index.md
-    - AI: 软件/AI/index.md
-    - 面试题: 软件/面试题/index.md
-  - 产品经理:
-    - 产品经理: 产品经理/index.md
-    - 入门基础: 产品经理/入门基础.md
-    - 用户分析: 产品经理/用户分析.md
-  - 项目管理:
-    - 项目管理: 项目管理/index.md
-    - PMP: 项目管理/PMP/index.md
-    - ACP敏捷管理: 项目管理/ACP敏捷管理/index.md
-  - 阅读:
-    - 阅读: 阅读/index.md
-  - 3D建模:
-    - 3D建模: 3D建模/index.md
-  - 运维技术:
-    - 运维技术: 运维技术/index.md
-  # - 我的:
-  #   - 我的: 我的/index.md
