@@ -3,6 +3,7 @@ import sys
 import os
 import subprocess
 import json
+import re
 
 def call_api(user_prompt, system_prompt="生成git commit，只返回结果，格式：feat: xxx"):
     api_key = os.environ.get("MINIMAX_API_KEY")
@@ -45,6 +46,8 @@ def call_api(user_prompt, system_prompt="生成git commit，只返回结果，�
         if not content:
             print("错误: content 为空", file=sys.stderr)
             sys.exit(1)
+
+        content = re.sub(r'<think>.*?', '', content, flags=re.DOTALL).strip()
 
         return content
 
