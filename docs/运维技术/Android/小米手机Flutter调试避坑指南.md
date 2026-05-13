@@ -6,26 +6,90 @@
 
 ## 一、设备连接与驱动篇（最关键）
 
-### 问题 1：ADB 识别不到设备（显示 WinUSB/通用串行总线设备）
+### 🔴 核心问题：WinUSB 驱动反复回退
 
-| 解决步骤 | 关键说明 |
-|----------|----------|
-| 1. 右键设备 → 更新驱动 | — |
-| 2. 手动选择：**Android 设备** → **Android ADB Interface** | — |
-| 3. 执行 `adb kill-server && adb start-server` | 必须安装 Google 官方 ADB 驱动 |
+**每次重启电脑/重插手机，驱动就变回 WinUSB，根本原因：**
+
+1. Windows 自动更新把 WinUSB 驱动优先级设得比 ADB 更高
+2. 小米的 USB VID/PID 在 Windows 驱动库中匹配到通用驱动而非 ADB 驱动
+
+> 💡 **核心问题不是「装不上」，而是「装完会被 Windows 自动覆盖」**
+
+---
+
+### 方案一（关键）：禁用 Windows 自动更新驱动
+
+```powershell
+# 1. Win+R 输入 sysdm.cpl 打开「系统属性」
+# 2. 切换到「硬件」选项卡 → 点击「设备安装设置」
+# 3. 选择「否，让我选择要执行的操作」
+# 4. 勾选「从不安装来自Windows更新的驱动程序软件」
+# 5. 点击「保存更改」
+```
+
+---
+
+### 方案二：手动安装并锁定 ADB 驱动
+
+```powershell
+# 1. 设备管理器找到「通用串行总线设备」里的 Redmi K70 Ultra ALSC
+# 2. 右键 → 更新驱动程序 → 浏览我的计算机以查找驱动程序
+# 3. 选择「让我从计算机上的可用驱动程序列表中选取」
+# 4. 选择「Android设备」→ Google → Android ADB Interface → 下一步安装
+# 5. 安装完成后，设备会出现在「Android设备」分类下
+```
+
+---
+
+### 方案三：用 devcon.exe 彻底锁死驱动
+
+```powershell
+# 1. 查找设备硬件 ID（需要安装 Android SDK）
+devcon.exe find * | findstr /i "Redmi"
+# 输出格式：USB\VID_XXXX&PID_XXXX
+
+# 2. 强制绑定 ADB 驱动（替换成你的实际硬件 ID）
+devcon.exe update USB\VID_XXXX&PID_XXXX "C:\Users\你的用户名\AppData\Local\Android\Sdk\extras\google\usb_driver\android_winusb.inf"
+```
+
+> ⚠️ devcon.exe 需要管理员权限。Android SDK 默认不包含 devcon.exe，需单独下载 Windows 驱动工具包(WDK)。
+
+---
+
+### 方案四：终极兜底 - 小米手机助手
+
+```powershell
+# 1. 安装「小米手机助手」，它会自动安装并锁定官方 ADB 驱动
+# 2. 安装完成后卸载小米助手，驱动文件会保留，不会回退
+# 3. 重新插拔手机，设备会稳定显示为「Android Composite ADB Interface」
+```
+
+> 💡 **即使之前装过又卸载了，仍需重新安装来修复残留驱动**
+
+---
+
+### 问题 A：ADB 识别不到设备（显示 WinUSB/通用串行总线设备）
+
+| 解决步骤 | 说明 |
+|----------|------|
+| 右键设备 → 更新驱动 | — |
+| 手动选择：**Android 设备** → **Android ADB Interface** | — |
+| 执行 `adb kill-server && adb start-server` | 必须安装 Google 官方 ADB 驱动 |
 
 **WinUSB 模式会直接导致 Flutter 版本识别错误。**
 
-### 问题 2：无线调试能连，但 Flutter 识别为 Android 6.0.1
+---
 
-**原因**：小米 Android 16 的无线调试存在已知兼容性 Bug。
+### 问题 B：无线调试能连，但 Flutter 识别为 Android 6.0.1
 
 | 解决步骤 |
 |----------|
-| 1. 关闭手机「开发者选项」里的「无线调试」和「ADB TLS 连接」 |
+| 1. 关闭「开发者选项」里的「无线调试」和「ADB TLS 连接」 |
 | 2. 改用**原装数据线有线连接** |
 
-### 问题 3：设备管理器出现黄色感叹号
+---
+
+### 问题 C：设备管理器出现黄色感叹号
 
 | 方案 | 说明 |
 |------|------|
@@ -51,7 +115,12 @@
 ### ✅ 额外设置
 
 - 连接电脑时，手机弹窗选择**「文件传输（MTP）」**，并勾选**「始终允许此计算机」**
-- 关闭「USB 安装安全校验」，避免小米拦截 Flutter 安装应用
+- **关闭「USB 安装安全校验」**，避免小米拦截 Flutter 安装应用
+
+### ✅ 防回退设置（手机端）
+
+1. 每次连接电脑都**手动选择「文件传输（MTP）」**，不要选"仅充电"
+2. 关闭手机里的「连接电脑时自动安装驱动」相关选项（部分 MIUI 有此设置）
 
 ---
 
@@ -65,9 +134,9 @@ adb start-server
 adb devices
 ```
 
-**判断连接正常**：`设备ID + device`
+**连接正常**：`设备ID + device`
 
-**如果是 `unauthorized`**：手机上点击「始终允许」授权电脑。
+**如果是 `unauthorized`**：手机上点击「始终允许」授权。
 
 ### 2. Flutter 项目强制兼容配置
 
@@ -85,7 +154,7 @@ android {
 }
 ```
 
-### 3. 调试命令（遇到版本识别异常时直接用）
+### 3. 调试命令（版本识别异常时直接用）
 
 ```powershell
 # 跳过版本校验强制运行
@@ -99,42 +168,29 @@ flutter run -d 你的设备ID --no-version-check
 
 ## 四、常见问题快速排查
 
-### 问题 1：Flutter 能看到设备，但无法安装应用
-
-```powershell
-# 排查步骤
-1. 检查手机是否开启「USB 安装」权限
-2. 关闭小米手机管家的「安装未知应用」拦截
-3. flutter clean && flutter pub get  清理缓存后重试
-```
-
-### 问题 2：应用安装成功，但打开后闪退
-
-```powershell
-# 排查步骤
-1. 检查 targetSdkVersion 是否为 35，是否和 compileSdkVersion 一致
-2. 检查手机是否开启了「开发者选项」里的「不保留活动」，关闭该选项
-```
-
-### 问题 3：ADB 能识别设备，Flutter devices 看不到
-
-```powershell
-# 排查步骤
-1. 重启电脑和手机，重新插拔数据线
-2. 检查数据线是否为原装（劣质数据线只充电不传数据）
-```
+| 问题 | 排查步骤 |
+|------|----------|
+| Flutter 能看到设备，但无法安装 | 1. 检查「USB 安装」权限 2. 关闭小米管家拦截 3. `flutter clean && flutter pub get` |
+| 应用安装成功，但打开后闪退 | 1. targetSdkVersion 需为 35 2. 关闭「不保留活动」 |
+| ADB 能识别，Flutter devices 看不到 | 1. 重启电脑和手机 2. 使用原装数据线 |
 
 ---
 
 ## 五、终极兜底方案
 
-所有方法都无效时：
-
 1. **备份手机数据，更新到最新版 MIUI/HyperOS**
-2. **电脑端重新安装 Android SDK Platform-Tools，确保版本 ≥ 35**
-3. **彻底卸载电脑上的第三方手机助手**（可能会劫持 ADB 驱动）
+2. **重新安装 Android SDK Platform-Tools，确保版本 ≥ 35**
+3. **彻底卸载电脑上的第三方手机助手**（可能劫持 ADB 驱动）
 4. **改用 Android Studio 自带的 ADB 工具调试**
 
 ---
 
-*来源：实际踩坑经验 · Android 16 + MIUI/HyperOS*
+## 💡 附：为什么会反复变回去？
+
+Windows 有个机制：每次检测到设备的驱动签名或匹配度更高的通用驱动时，会自动替换手动安装的驱动。
+
+**禁用自动更新驱动 + 强制绑定 ADB 驱动**，是唯一能彻底解决这个问题的方法。
+
+---
+
+*来源：实际踩坑经验 · Android 16 + MIUI/HyperOS + Redmi K70 Ultra*
