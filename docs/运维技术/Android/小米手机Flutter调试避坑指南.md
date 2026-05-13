@@ -213,4 +213,132 @@ Windows 有个机制：每次检测到设备的驱动签名或匹配度更高的
 
 ---
 
+## 六、高级绕过方案：Flutter SDK 源码补丁（小米 HyperOS 专属）
+
+> ⚠️ **警告**：以下补丁直接修改 Flutter SDK 源码，适合已root/愿意折腾的开发者。普通用户建议用前面的方案。
+
+**问题根因**：小米 HyperOS 会劫持 `ro.build.version.sdk` 等系统属性，让 Flutter 误判设备版本号。这个补丁让 Flutter 对特定设备（你的 `FIF6VCDQLVRGYH8D`）强制返回正确值。
+
+### 补丁文件
+
+需要修改 Flutter SDK 中的 Android 设备检测代码：
+
+```
+{Flutter SDK路径}/packages/flutter_tools/lib/src/android/android_device.dart
+```
+
+### 补丁一：强制指定设备 API 版本
+
+找到这个 getter：
+```dart
+@visibleForTesting
+Future<String?> get apiVersion => _getProperty('ro.build.version.sdk');
+```
+
+替换为：
+```dart
+@visibleForTesting
+Future<String?> get apiVersion async {
+  // 仅对这台设备强制返回 API 35
+  if (id == 'FIF6VCDQLVRGYH8D') {
+    return '35';
+  }
+  return _getProperty('ro.build.version.sdk');
+}
+```
+
+### 补丁二：绕过版本检查
+
+找到 `_checkForSupportedAndroidVersion()` 方法，替换为：
+
+```dart
+Future<bool> _checkForSupportedAndroidVersion() async {
+  // 你的设备已经强制 API 35，直接通过检查
+  if (id == 'FIF6VCDQLVRGYH8D') {
+    return true;
+  }
+
+  // 以下保持原来逻辑不变
+  final String? adbPath = _androidSdk.adbPath;
+  if (adbPath == null) {
+    return false;
+  }
+  try {
+    await _processUtils.run(<String>[adbPath, 'start-server'], throwOnError: true);
+    final String sdkVersion =
+        await _getProperty('ro.build.version.sdk') ?? gradle_utils.minSdkVersion;
+
+    final int? sdkVersionParsed = int.tryParse(sdkVersion);
+    if (sdkVersionParsed == null) {
+      _logger.printError('Unexpected response from getprop: "$sdkVersion"');
+      return false;
+    }
+
+    if (sdkVersionParsed < gradle_utils.minSdkVersionInt) {
+      _logger.printError(
+        'The Android version ($sdkVersion) on the target device is too old. Please '
+        'use a API ${gradle_utils.minSdkVersion} device or later.',
+      );
+      return false;
+    }
+
+    return true;
+  } on Exception catch (e, stacktrace) {
+    _logger.printError('Unexpected failure from adb: $e');
+    _logger.printError('Stacktrace: $stacktrace');
+    return false;
+  }
+}
+```
+
+### 补丁三：强制 isSupported 返回 true
+
+找到 `isSupported()` 方法，替换为：
+
+```dart
+@override
+Future<bool> isSupported() async {
+  if (id == 'FIF6VCDQLVRGYH8D') {
+    return true;
+  }
+  final TargetPlatform platform = await targetPlatform;
+  return switch (platform) {
+    TargetPlatform.android ||
+    TargetPlatform.android_arm ||
+    TargetPlatform.android_arm64 ||
+    TargetPlatform.android_x64 => true,
+    _ => false,
+  };
+}
+```
+
+### 应用补丁后
+
+```powershell
+flutter clean
+flutter devices
+```
+
+预期输出：
+```
+FIF6VCDQLVRGYH8D (mobile) • FIF6VCDQLVRGYH8D • android • Android 15 (API 35)
+```
+
+### 运行项目
+
+```powershell
+flutter run -d FIF6VCDQLVRGYH8D
+```
+
+### 补丁特点
+
+| 特点 | 说明 |
+|------|------|
+| ✅ 最小改动 | 只改 3 处，不动其他 |
+| ✅ 设备唯一 | 只对 FIF6VCDQLVRGYH8D 生效 |
+| ✅ 永久有效 | 修改 SDK 源码，持久生效 |
+| ⚠️ SDK 升级会重置 | 升级 Flutter 后需重新打补丁 |
+
+---
+
 *来源：实际踩坑经验 · Android 16 + MIUI/HyperOS + Redmi K70 Ultra*
